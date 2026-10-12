@@ -1,4 +1,4 @@
-import { Component, signal } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService, NMHCoreModule } from 'nmh-core';
 
@@ -9,7 +9,11 @@ import { AuthService, NMHCoreModule } from 'nmh-core';
   styleUrl: './app.css',
   templateUrl: './app.html',
 })
-export class App {
+export class App implements OnInit{
   constructor(public authService: AuthService) {}
   protected readonly title = signal('hakamat-tfasim');
+  ngOnInit() {
+    this.authService.login().subscribe();
+  }
+
 }
