@@ -22,7 +22,7 @@ namespace TavniyotBuilder.Api.Controllers
         {
             try
             {
-                List<Milestone> milestones = await _maslulimRepository.GetMaslulByTofesVersionTEST(idRecTofesVersion);
+                List<EvenDerech> milestones = await _maslulimRepository.GetMaslulByTofesVersionTEST(idRecTofesVersion);
 
                 return Ok(milestones);
             }

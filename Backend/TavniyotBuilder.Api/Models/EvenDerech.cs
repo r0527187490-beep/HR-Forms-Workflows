@@ -2,7 +2,7 @@ using TavniyotBuilder.Api.Models.Enums;
 
 namespace TavniyotBuilder.Api.Models
 {
-    public class Milestone
+    public class EvenDerech
     {
         public int IdRec { get; set; }
         public int IdRecTofesVersion { get; set; }

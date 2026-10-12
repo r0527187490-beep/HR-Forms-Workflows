@@ -9,7 +9,6 @@ namespace TavniyotBuilder.Api.Services
     public class TavniyotService : ITavniyotRepository
     {
         private readonly TavniyotBuilderContext _context;
-        private const string GetAllTavniyotSp = "GetAllTavniyot";
 
         public TavniyotService(TavniyotBuilderContext context)
         {
@@ -18,35 +17,41 @@ namespace TavniyotBuilder.Api.Services
 
         public async Task<List<Tavnit>> GetAllTavniyotTEST()
         {
+            var sp = "GetAllTavniyot";
             using var connection = _context.CreateConnection();
 
             var tavniyot = await connection.QueryAsync<Tavnit>(
-                sql: GetAllTavniyotSp,
+                sql: sp,
                 commandType: CommandType.StoredProcedure
             );
 
             return tavniyot.ToList();
         }
 
+        // מכיוון שהערכים החוזרים מהפרוצדורה הם בשמות שונים (CodTofes ו-NameTofes)
+        // לעומת השמות במודל (Cod ו-Teur), אין צורך לפתוח מודל חדש. 
+        // במקום זאת, מבצעים foreach וממפים ישירות:
+        // Cod = item.CodTofes, Teur = item.NameTofes
         public async Task<List<CodTeur>> GetCodTeurTavniyotTEST()
         {
+            var sp = "GetCodTeurTavniyot";
             using var connection = _context.CreateConnection();
 
-            var tavniyot = await connection.QueryAsync<Tavnit>(
-                sql: GetAllTavniyotSp,
+            var data = (await connection.QueryAsync(
+                sql: sp,
                 commandType: CommandType.StoredProcedure
-            );
+            )).ToList();
 
             var codTeurList = new List<CodTeur>();
 
-            foreach (var tavnit in tavniyot)
+            foreach (var item in data)
             {
-                if (tavnit.IsPail)
+                if (item.CodTofes != null && item.NameTofes != null)
                 {
                     codTeurList.Add(new CodTeur
                     {
-                        Cod = tavnit.IdRec,
-                        Teur = tavnit.ShemTofes
+                        Cod = item.CodTofes,
+                        Teur = item.NameTofes
                     });
                 }
             }
