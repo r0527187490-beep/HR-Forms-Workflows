@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TavniyotBuilder.Api.Interfaces;
+using TavniyotBuilder.Api.Models;
 
 namespace TavniyotBuilder.Api.Controllers
 {
@@ -16,18 +17,18 @@ namespace TavniyotBuilder.Api.Controllers
             _maslulimRepository = maslulimRepository;
         }
 
-        // TEST - פונקציה לדוגמה, להעתקה
-        [HttpGet("GetMaslulByTavnitIdTEST/{tavnitId}")]
-        public async Task<IActionResult> GetMaslulByTavnitIdTEST(int tavnitId)
+        [HttpGet("GetMaslulByTofesVersionTEST")]
+        public async Task<IActionResult> GetMaslulByTofesVersionTEST(int idRecTofesVersion)
         {
             try
             {
-                var list = await _maslulimRepository.GetMaslulByTavnitIdTEST(tavnitId);
-                return Ok(list);
+                List<Milestone> milestones = await _maslulimRepository.GetMaslulByTofesVersionTEST(idRecTofesVersion);
+
+                return Ok(milestones);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"GetMaslulByTavnitIdTEST Exception: {ex.Message}");
+                return StatusCode(500, $"{nameof(GetMaslulByTofesVersionTEST)} Exception: {ex.Message}");
             }
         }
     }

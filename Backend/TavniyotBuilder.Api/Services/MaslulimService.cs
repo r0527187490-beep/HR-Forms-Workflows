@@ -15,19 +15,21 @@ namespace TavniyotBuilder.Api.Services
             _context = context;
         }
 
-        // TEST - פונקציה לדוגמה, להעתקה
-        public async Task<List<Milestone>> GetMaslulByTavnitIdTEST(int tavnitId)
+        public async Task<List<Milestone>> GetMaslulByTofesVersionTEST(int idRecTofesVersion)
         {
-            var sp = "Maslulim_GetMaslulByTavnitId"; // שם הפרוצדורה - להחליף לשם האמיתי ב-DB
+            var sp = "GetMaslulByTofesVersion";
             var parameters = new DynamicParameters();
-            parameters.Add("@TavnitId", tavnitId);
+            parameters.Add("@IdRecTofesVersion", idRecTofesVersion, DbType.Int32);
 
-            using (var connection = _context.CreateConnection())
-            {
-                var list = await connection.QueryAsync<Milestone>(sp, parameters, commandType: CommandType.StoredProcedure);
+            using var connection = _context.CreateConnection();
 
-                return list.ToList();
-            }
+            var milestones = await connection.QueryAsync<Milestone>(
+                sql: sp,
+                param: parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            return milestones.ToList();
         }
     }
 }

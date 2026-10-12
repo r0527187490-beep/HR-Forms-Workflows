@@ -15,17 +15,17 @@ namespace TavniyotBuilder.Api.Services
             _context = context;
         }
 
-        // TEST - פונקציה לדוגמה, להעתקה
         public async Task<List<Tavnit>> GetAllTavniyotTEST()
         {
-            var sp = "Tavniyot_GetAllTavniyot"; // שם הפרוצדורה - להחליף לשם האמיתי ב-DB
+            var sp = "GetAllTavniyot";
+            using var connection = _context.CreateConnection();
 
-            using (var connection = _context.CreateConnection())
-            {
-                var list = await connection.QueryAsync<Tavnit>(sp, commandType: CommandType.StoredProcedure);
+            var tavniyot = await connection.QueryAsync<Tavnit>(
+                sql: sp,
+                commandType: CommandType.StoredProcedure
+            );
 
-                return list.ToList();
-            }
+            return tavniyot.ToList();
         }
     }
 }

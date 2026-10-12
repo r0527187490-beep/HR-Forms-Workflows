@@ -4,10 +4,13 @@ namespace TavniyotBuilder.Api.Models
 {
     public class Milestone
     {
-        public int Id { get; set; }
-        public int TavnitId { get; set; }
-        public int StepNumber { get; set; }
-        public ApproverType ApproverType { get; set; }
-        public string AllowedActions { get; set; } = string.Empty;
+        public int IdRec { get; set; }
+        public int IdRecTofesVersion { get; set; }
+        public int SederShalav { get; set; }
+        public string ShemShalav { get; set; } = string.Empty;
+        public ApproverType SugMaasher { get; set; }
+        public string? IdsMaasher { get; set; }
+        public string Peulot { get; set; } = string.Empty;
+        public string? IdEvenDerechHaczara { get; set; }
     }
 }

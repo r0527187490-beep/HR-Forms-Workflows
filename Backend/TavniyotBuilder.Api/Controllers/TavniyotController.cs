@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using TavniyotBuilder.Api.Interfaces;
+using TavniyotBuilder.Api.Models;
 
 namespace TavniyotBuilder.Api.Controllers
 {
@@ -16,19 +17,21 @@ namespace TavniyotBuilder.Api.Controllers
             _tavniyotRepository = tavniyotRepository;
         }
 
-        // TEST - פונקציה לדוגמה, להעתקה
         [HttpGet("GetAllTavniyotTEST")]
         public async Task<IActionResult> GetAllTavniyotTEST()
         {
             try
             {
-                var list = await _tavniyotRepository.GetAllTavniyotTEST();
-                return Ok(list);
+                List<Tavnit> tavniyot = await _tavniyotRepository.GetAllTavniyotTEST();
+
+                return Ok(tavniyot);
             }
             catch (Exception ex)
             {
-                return StatusCode(500, $"GetAllTavniyotTEST Exception: {ex.Message}");
+                return StatusCode(500, $"{nameof(GetAllTavniyotTEST)} Exception: {ex.Message}");
             }
         }
+
+    
     }
 }

@@ -4,7 +4,6 @@ namespace TavniyotBuilder.Api.Interfaces
 {
     public interface IMaslulimRepository
     {
-        // TEST - פונקציה לדוגמה, להעתקה
-        Task<List<Milestone>> GetMaslulByTavnitIdTEST(int tavnitId);
+        Task<List<Milestone>> GetMaslulByTofesVersionTEST(int idRecTofesVersion);
     }
 }

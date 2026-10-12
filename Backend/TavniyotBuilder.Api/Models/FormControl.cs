@@ -4,9 +4,11 @@ namespace TavniyotBuilder.Api.Models
 {
     public class FormControl
     {
-        public int Id { get; set; }
-        public int TavnitId { get; set; }
-        public ControlType ControlType { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public ControlType Type { get; set; }
         public string Label { get; set; } = string.Empty;
+        public bool Required { get; set; }
+        public string? SmartFieldKey { get; set; }
+        public bool ReadOnly { get; set; }
     }
 }
