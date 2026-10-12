@@ -34,7 +34,7 @@
     "ngx-extended-pdf-viewer": "^18.1.15",
     "nma-search-oved": "file:C:/angular-libs/nma-search-oved-0.1.0.tgz",
     "nmh-alert": "file:C:/angular-libs/nmh-alert-1.0.5.tgz",
-    "nmh-core": "file:../../angular-libs/nmh-core-1.0.9.tgz",
+    "nmh-core": "file:../../../angular-libs/nmh-core-1.19.2.tgz",
     "primeicons": "^7.0.0",
     "primeng": "^19.1.4",
     "rxjs": "~7.8.0",
