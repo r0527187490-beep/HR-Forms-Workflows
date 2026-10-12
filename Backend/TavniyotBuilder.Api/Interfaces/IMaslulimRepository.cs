@@ -4,6 +4,6 @@ namespace TavniyotBuilder.Api.Interfaces
 {
     public interface IMaslulimRepository
     {
-        Task<List<Milestone>> GetMaslulByTofesVersionTEST(int idRecTofesVersion);
+        Task<List<EvenDerech>> GetMaslulByTofesVersionTEST(int idRecTofesVersion);
     }
 }

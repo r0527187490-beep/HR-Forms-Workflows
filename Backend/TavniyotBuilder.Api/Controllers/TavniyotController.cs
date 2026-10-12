@@ -32,6 +32,21 @@ namespace TavniyotBuilder.Api.Controllers
             }
         }
 
-    
+        [HttpGet("GetCodTeurTavniyotTEST")]
+        public async Task<IActionResult> GetCodTeurTavniyotTEST()
+        {
+            try
+            {
+                List<CodTeur> codTeurList = await _tavniyotRepository.GetCodTeurTavniyotTEST();
+
+                return Ok(codTeurList);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(GetCodTeurTavniyotTEST)} Exception: {ex.Message}");
+            }
+        }
+
+
     }
 }

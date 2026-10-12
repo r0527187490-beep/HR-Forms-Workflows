@@ -15,7 +15,7 @@ namespace TavniyotBuilder.Api.Services
             _context = context;
         }
 
-        public async Task<List<Milestone>> GetMaslulByTofesVersionTEST(int idRecTofesVersion)
+        public async Task<List<EvenDerech>> GetMaslulByTofesVersionTEST(int idRecTofesVersion)
         {
             var sp = "GetMaslulByTofesVersion";
             var parameters = new DynamicParameters();
@@ -23,7 +23,7 @@ namespace TavniyotBuilder.Api.Services
 
             using var connection = _context.CreateConnection();
 
-            var milestones = await connection.QueryAsync<Milestone>(
+            var milestones = await connection.QueryAsync<EvenDerech>(
                 sql: sp,
                 param: parameters,
                 commandType: CommandType.StoredProcedure
