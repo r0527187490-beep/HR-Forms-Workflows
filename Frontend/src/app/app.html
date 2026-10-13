@@ -1,7 +1,7 @@
-@if (authService.isAuthenticated()) {
-  <p>התחברת בהצלחה</p>
+@if (authService.Token) {
+  <!-- <app-header></app-header> -->
+     <p>יש טוקן, התחברתי</p>
 }
-<router-outlet />
-  
+<router-outlet></router-outlet>
 
 
