@@ -1,11 +1,11 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using NMHLogin.Authenticatin;
 using TavniyotBuilder.Api.Interfaces;
 using TavniyotBuilder.Api.Models;
 
 namespace TavniyotBuilder.Api.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class TavniyotController : ControllerBase
@@ -17,6 +17,7 @@ namespace TavniyotBuilder.Api.Controllers
             _tavniyotRepository = tavniyotRepository;
         }
 
+        [Authorize]
         [HttpGet("GetAllTavniyotTEST")]
         public async Task<IActionResult> GetAllTavniyotTEST()
         {
@@ -32,6 +33,7 @@ namespace TavniyotBuilder.Api.Controllers
             }
         }
 
+        [Authorize]
         [HttpGet("GetCodTeurTavniyotTEST")]
         public async Task<IActionResult> GetCodTeurTavniyotTEST()
         {
@@ -47,6 +49,29 @@ namespace TavniyotBuilder.Api.Controllers
             }
         }
 
+        // TEST - פונקציה לדוגמה, להעתקה (שימוש במזהה המשתמש המחובר)
+        // מזהה המשתמש נלקח מהטוקן ולא מהקליינט, כדי שלא ניתן יהיה לזייף אותו
+        [Authorize]
+        [HttpGet("GetTavniyotByYotzerTEST")]
+        public async Task<IActionResult> GetTavniyotByYotzerTEST()
+        {
+            try
+            {
+                string idUserString = Utils.GetUserId(HttpContext);
 
+                if (!int.TryParse(idUserString, out int idUser))
+                {
+                    return Unauthorized("Invalid user ID");
+                }
+
+                List<Tavnit> tavniyot = await _tavniyotRepository.GetTavniyotByYotzerTEST(idUser);
+
+                return Ok(tavniyot);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(GetTavniyotByYotzerTEST)} Exception: {ex.Message}");
+            }
+        }
     }
 }

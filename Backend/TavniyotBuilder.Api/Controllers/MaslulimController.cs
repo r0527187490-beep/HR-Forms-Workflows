@@ -5,7 +5,6 @@ using TavniyotBuilder.Api.Models;
 
 namespace TavniyotBuilder.Api.Controllers
 {
-    [Authorize]
     [ApiController]
     [Route("api/[controller]")]
     public class MaslulimController : ControllerBase
@@ -17,6 +16,7 @@ namespace TavniyotBuilder.Api.Controllers
             _maslulimRepository = maslulimRepository;
         }
 
+        [Authorize]
         [HttpGet("GetMaslulByTofesVersionTEST")]
         public async Task<IActionResult> GetMaslulByTofesVersionTEST(int idRecTofesVersion)
         {

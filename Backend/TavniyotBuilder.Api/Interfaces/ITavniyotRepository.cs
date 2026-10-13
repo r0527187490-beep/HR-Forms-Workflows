@@ -6,5 +6,6 @@ namespace TavniyotBuilder.Api.Interfaces
     {
         Task<List<Tavnit>> GetAllTavniyotTEST();
         Task<List<CodTeur>> GetCodTeurTavniyotTEST();
+        Task<List<Tavnit>> GetTavniyotByYotzerTEST(int idYotzer);
     }
 }
