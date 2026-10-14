@@ -8,17 +8,17 @@ namespace TavniyotBuilder.Api.Services
 {
     public class TavniyotService : ITavniyotRepository
     {
-        private readonly TavniyotBuilderContext _context;
+        private readonly TavniyotBuilderContext _tavniyotContext;
 
-        public TavniyotService(TavniyotBuilderContext context)
+        public TavniyotService(TavniyotBuilderContext tavniyotContext)
         {
-            _context = context;
+            _tavniyotContext = tavniyotContext;
         }
 
         public async Task<List<Tavnit>> GetAllTavniyotTEST()
         {
             var sp = "GetAllTavniyot";
-            using var connection = _context.CreateConnection();
+            using var connection = _tavniyotContext.CreateConnection();
 
             var tavniyot = await connection.QueryAsync<Tavnit>(
                 sql: sp,
@@ -28,14 +28,10 @@ namespace TavniyotBuilder.Api.Services
             return tavniyot.ToList();
         }
 
-        // מכיוון שהערכים החוזרים מהפרוצדורה הם בשמות שונים (CodTofes ו-NameTofes)
-        // לעומת השמות במודל (Cod ו-Teur), אין צורך לפתוח מודל חדש. 
-        // במקום זאת, מבצעים foreach וממפים ישירות:
-        // Cod = item.CodTofes, Teur = item.NameTofes
         public async Task<List<CodTeur>> GetCodTeurTavniyotTEST()
         {
             var sp = "GetCodTeurTavniyot";
-            using var connection = _context.CreateConnection();
+            using var connection = _tavniyotContext.CreateConnection();
 
             var data = (await connection.QueryAsync(
                 sql: sp,
@@ -64,7 +60,7 @@ namespace TavniyotBuilder.Api.Services
             var parameters = new DynamicParameters();
             parameters.Add("@IdYotzer", idYotzer, DbType.Int32);
 
-            using var connection = _context.CreateConnection();
+            using var connection = _tavniyotContext.CreateConnection();
 
             var tavniyot = await connection.QueryAsync<Tavnit>(
                 sql: sp,

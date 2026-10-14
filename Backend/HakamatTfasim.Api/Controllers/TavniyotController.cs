@@ -49,8 +49,6 @@ namespace TavniyotBuilder.Api.Controllers
             }
         }
 
-        // TEST - פונקציה לדוגמה, להעתקה (שימוש במזהה המשתמש המחובר)
-        // מזהה המשתמש נלקח מהטוקן ולא מהקליינט, כדי שלא ניתן יהיה לזייף אותו
         [Authorize]
         [HttpGet("GetTavniyotByYotzerTEST")]
         public async Task<IActionResult> GetTavniyotByYotzerTEST()
