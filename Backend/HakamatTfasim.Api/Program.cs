@@ -9,7 +9,7 @@ ConfigurationManager configuration = builder.Configuration;
 var customApp = new CustomWebApplicationBuilder(builder, configuration);
 builder = customApp.Builder;
 
-builder.Services.AddSingleton<TavniyotBuilderContext>();
+builder.Services.AddSingleton<HakamatTfasimContext>();
 builder.Services.AddScoped<ITavniyotRepository, TavniyotService>();
 builder.Services.AddScoped<IMaslulimRepository, MaslulimService>();
 

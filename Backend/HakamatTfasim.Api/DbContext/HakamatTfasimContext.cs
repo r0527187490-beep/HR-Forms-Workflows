@@ -3,12 +3,12 @@ using System.Data;
 
 namespace TavniyotBuilder.Api.DbContext
 {
-    public class TavniyotBuilderContext
+    public class HakamatTfasimContext
     {
         private readonly string _connectionString;
         private readonly IConfiguration _configuration;
 
-        public TavniyotBuilderContext(IConfiguration configuration)
+        public HakamatTfasimContext(IConfiguration configuration)
         {
             _configuration = configuration;
             _connectionString = _configuration.GetConnectionString("TavniyotBuilderCon");
