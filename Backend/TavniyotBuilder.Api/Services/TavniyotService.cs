@@ -8,9 +8,9 @@ namespace TavniyotBuilder.Api.Services
 {
     public class TavniyotService : ITavniyotRepository
     {
-        private readonly HakamatTfasimContext _tavniyotContext;
+        private readonly TavniyotBuilderContext _tavniyotContext;
 
-        public TavniyotService(HakamatTfasimContext tavniyotContext)
+        public TavniyotService(TavniyotBuilderContext tavniyotContext)
         {
             _tavniyotContext = tavniyotContext;
         }
