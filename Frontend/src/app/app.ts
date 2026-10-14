@@ -7,7 +7,7 @@ import { HeaderComponent } from './shared/components/header/header.component';
 @Component({
   imports: [RouterOutlet,NMHCoreModule,HeaderComponent ],
   selector: 'app-root',
-  styleUrl: './app.css',
+  styleUrl: './app.scss',
   templateUrl: './app.html',
 })
 export class App {
