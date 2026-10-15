@@ -1,1 +1,7 @@
-<p>nihul-tavniyot-dashboard works!</p>
+<p-toast />
+<p-confirmdialog />
+<h2>תבניות</h2>
+<p-button label="רענון" (onClick)="confirmRefresh()" />
+@for (t of tavniyot(); track t.idRec) {
+  <p>{{ t.idRec }} - {{ t.shemTofes }}</p>
+}

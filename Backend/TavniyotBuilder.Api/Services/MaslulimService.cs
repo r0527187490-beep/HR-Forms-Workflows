@@ -8,11 +8,11 @@ namespace TavniyotBuilder.Api.Services
 {
     public class MaslulimService : IMaslulimRepository
     {
-        private readonly TavniyotBuilderContext _context;
+        private readonly TavniyotBuilderContext _tavniyotContext;
 
-        public MaslulimService(TavniyotBuilderContext context)
+        public MaslulimService(TavniyotBuilderContext tavniyotContext)
         {
-            _context = context;
+            _tavniyotContext = tavniyotContext;
         }
 
         public async Task<List<EvenDerech>> GetMaslulByTofesVersionTEST(int idRecTofesVersion)
@@ -21,7 +21,7 @@ namespace TavniyotBuilder.Api.Services
             var parameters = new DynamicParameters();
             parameters.Add("@IdRecTofesVersion", idRecTofesVersion, DbType.Int32);
 
-            using var connection = _context.CreateConnection();
+            using var connection = _tavniyotContext.CreateConnection();
 
             var milestones = await connection.QueryAsync<EvenDerech>(
                 sql: sp,
