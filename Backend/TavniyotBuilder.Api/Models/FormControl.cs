@@ -10,5 +10,7 @@ namespace TavniyotBuilder.Api.Models
         public bool Required { get; set; }
         public string? SmartFieldKey { get; set; }
         public bool ReadOnly { get; set; }
+        public string? HelpText { get; set; }                         
+        public string? DefaultValue { get; set; } 
     }
 }

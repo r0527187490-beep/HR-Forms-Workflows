@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using NMHLogin.Authenticatin;
+using System.Text.Json;
 using TavniyotBuilder.Api.Interfaces;
 using TavniyotBuilder.Api.Models;
 
@@ -63,6 +64,46 @@ namespace TavniyotBuilder.Api.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"{nameof(GetBasicControlsList)} Exception: {ex.Message}");
+            }
+        }
+
+        [Authorize]
+        [HttpPost("PrepareFormForSave")]
+        public async Task<IActionResult> PrepareFormForSave(FormStructure form)
+        {
+            try
+            {
+                string mivneJson = await _tavniyotRepository.PrepareFormForSave(form);
+
+                return Content(mivneJson, "application/json");
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(PrepareFormForSave)} Exception: {ex.Message}");
+            }
+        }
+
+        [Authorize]
+        [HttpPost("RestoreFormStructure")]
+        public IActionResult RestoreFormStructure([FromBody] JsonElement mivneJson)
+        {
+            try
+            {
+                FormStructure form = _tavniyotRepository.RestoreFormStructure(mivneJson.GetRawText());
+
+                return Ok(form);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(RestoreFormStructure)} Exception: {ex.Message}");
             }
         }
 
