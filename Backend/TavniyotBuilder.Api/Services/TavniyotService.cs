@@ -86,6 +86,16 @@ namespace TavniyotBuilder.Api.Services
         {
             return char.ToLowerInvariant(value[0]) + value.Substring(1);
         }
+        public List<FormControl> GetBasicControlsList()
+        {
+            return new List<FormControl>
+            {
+                new FormControl { Type = ControlType.Text, Label = "טקסט קצר" },
+                new FormControl { Type = ControlType.Paragraph, Label = "פסקה" },
+                new FormControl { Type = ControlType.Date, Label = "תאריך" },
+                new FormControl { Type = ControlType.File, Label = "העלאת קובץ" }
+            };
+        }
 
     }
 }

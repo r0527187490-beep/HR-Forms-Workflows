@@ -50,5 +50,21 @@ namespace TavniyotBuilder.Api.Controllers
             }
         }
 
+        [Authorize]
+        [HttpGet("GetBasicControlsList")]
+        public IActionResult GetBasicControlsList()
+        {
+            try
+            {
+                List<FormControl> basicControls = _tavniyotRepository.GetBasicControlsList();
+
+                return Ok(basicControls);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(GetBasicControlsList)} Exception: {ex.Message}");
+            }
+        }
+
     }
 }
