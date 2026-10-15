@@ -8,50 +8,39 @@ namespace TavniyotBuilder.Api.Services
 {
     public class TavniyotService : ITavniyotRepository
     {
-        private readonly TavniyotBuilderContext _context;
-        private const string GetAllTavniyotSp = "GetAllTavniyot";
+        private readonly TavniyotBuilderContext _tavniyotContext;
 
-        public TavniyotService(TavniyotBuilderContext context)
+        public TavniyotService(TavniyotBuilderContext tavniyotContext)
         {
-            _context = context;
-        }
-
-        public async Task<List<Tavnit>> GetAllTavniyotTEST()
-        {
-            using var connection = _context.CreateConnection();
-
-            var tavniyot = await connection.QueryAsync<Tavnit>(
-                sql: GetAllTavniyotSp,
-                commandType: CommandType.StoredProcedure
-            );
-
-            return tavniyot.ToList();
+            _tavniyotContext = tavniyotContext;
         }
 
         public async Task<List<CodTeur>> GetCodTeurTavniyotTEST()
         {
-            using var connection = _context.CreateConnection();
+            var sp = "GetCodTeurTavniyot";
+            using var connection = _tavniyotContext.CreateConnection();
 
-            var tavniyot = await connection.QueryAsync<Tavnit>(
-                sql: GetAllTavniyotSp,
+            var data = (await connection.QueryAsync(
+                sql: sp,
                 commandType: CommandType.StoredProcedure
-            );
+            )).ToList();
 
             var codTeurList = new List<CodTeur>();
 
-            foreach (var tavnit in tavniyot)
+            foreach (var item in data)
             {
-                if (tavnit.IsPail)
+                if (item.CodTofes != null && item.NameTofes != null)
                 {
                     codTeurList.Add(new CodTeur
                     {
-                        Cod = tavnit.IdRec,
-                        Teur = tavnit.ShemTofes
+                        Cod = item.CodTofes,
+                        Teur = item.NameTofes
                     });
                 }
             }
 
             return codTeurList;
         }
+  
     }
 }

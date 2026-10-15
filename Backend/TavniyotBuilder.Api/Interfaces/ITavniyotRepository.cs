@@ -4,7 +4,6 @@ namespace TavniyotBuilder.Api.Interfaces
 {
     public interface ITavniyotRepository
     {
-        Task<List<Tavnit>> GetAllTavniyotTEST();
         Task<List<CodTeur>> GetCodTeurTavniyotTEST();
     }
 }
