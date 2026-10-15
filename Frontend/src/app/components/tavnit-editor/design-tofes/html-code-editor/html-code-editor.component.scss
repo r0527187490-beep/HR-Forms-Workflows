@@ -33,11 +33,13 @@
 .btn-clear { background: #444; color: #ccc; &:hover { background: #555; } }
 .btn-visual { background: #3b82f6; &:hover { background: #2563eb; } }
 
-.code-area {
+textarea.code-area {
   flex: 1; width: 100%; box-sizing: border-box; resize: none;
-  border: 0; outline: 0; padding: 16px;
+  border: 0; border-radius: 0; outline: 0; box-shadow: none;
+  padding: 16px;
   background: #1e1e1e; color: #d4d4d4;
   font-family: Consolas, 'Courier New', monospace;
   font-size: 13px; line-height: 1.6; tab-size: 2;
+  &:enabled:focus { border: 0; outline: 0; box-shadow: none; }
   &::placeholder { color: #7a8794; }
 }

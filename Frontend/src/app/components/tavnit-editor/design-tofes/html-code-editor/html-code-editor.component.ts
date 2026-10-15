@@ -1,10 +1,11 @@
 import { Component, inject, input, linkedSignal, output } from '@angular/core';
 import { ConfirmationService } from 'primeng/api';
 import { ConfirmDialogModule } from 'primeng/confirmdialog';
+import { TextareaModule } from 'primeng/textarea';
 
 @Component({
   selector: 'app-html-code-editor',
-  imports: [ConfirmDialogModule],
+  imports: [ConfirmDialogModule,TextareaModule],
   providers: [ConfirmationService],
   templateUrl: './html-code-editor.component.html',
   styleUrl: './html-code-editor.component.scss',
