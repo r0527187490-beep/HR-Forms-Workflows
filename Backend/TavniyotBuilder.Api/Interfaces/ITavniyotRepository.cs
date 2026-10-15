@@ -5,5 +5,6 @@ namespace TavniyotBuilder.Api.Interfaces
     public interface ITavniyotRepository
     {
         Task<List<CodTeur>> GetCodTeurTavniyotTEST();
+        Task<List<FormControl>> GetSmartFieldsList();
     }
 }

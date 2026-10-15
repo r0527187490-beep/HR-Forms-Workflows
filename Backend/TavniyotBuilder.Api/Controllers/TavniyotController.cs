@@ -33,5 +33,22 @@ namespace TavniyotBuilder.Api.Controllers
             }
         }
 
+
+        [Authorize]
+        [HttpGet("GetSmartFieldsList")]
+        public async Task<IActionResult> GetSmartFieldsList()
+        {
+            try
+            {
+                List<FormControl> smartFields = await _tavniyotRepository.GetSmartFieldsList();
+
+                return Ok(smartFields);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(GetSmartFieldsList)} Exception: {ex.Message}");
+            }
+        }
+
     }
 }
