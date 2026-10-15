@@ -18,22 +18,6 @@ namespace TavniyotBuilder.Api.Controllers
         }
 
         [Authorize]
-        [HttpGet("GetAllTavniyotTEST")]
-        public async Task<IActionResult> GetAllTavniyotTEST()
-        {
-            try
-            {
-                List<Tavnit> tavniyot = await _tavniyotRepository.GetAllTavniyotTEST();
-
-                return Ok(tavniyot);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"{nameof(GetAllTavniyotTEST)} Exception: {ex.Message}");
-            }
-        }
-
-        [Authorize]
         [HttpGet("GetCodTeurTavniyotTEST")]
         public async Task<IActionResult> GetCodTeurTavniyotTEST()
         {
@@ -49,27 +33,5 @@ namespace TavniyotBuilder.Api.Controllers
             }
         }
 
-        [Authorize]
-        [HttpGet("GetTavniyotByYotzerTEST")]
-        public async Task<IActionResult> GetTavniyotByYotzerTEST()
-        {
-            try
-            {
-                string idUserString = Utils.GetUserId(HttpContext);
-
-                if (!int.TryParse(idUserString, out int idUser))
-                {
-                    return Unauthorized("Invalid user ID");
-                }
-
-                List<Tavnit> tavniyot = await _tavniyotRepository.GetTavniyotByYotzerTEST(idUser);
-
-                return Ok(tavniyot);
-            }
-            catch (Exception ex)
-            {
-                return StatusCode(500, $"{nameof(GetTavniyotByYotzerTEST)} Exception: {ex.Message}");
-            }
-        }
     }
 }

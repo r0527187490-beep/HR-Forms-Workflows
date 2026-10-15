@@ -15,19 +15,6 @@ namespace TavniyotBuilder.Api.Services
             _tavniyotContext = tavniyotContext;
         }
 
-        public async Task<List<Tavnit>> GetAllTavniyotTEST()
-        {
-            var sp = "GetAllTavniyot";
-            using var connection = _tavniyotContext.CreateConnection();
-
-            var tavniyot = await connection.QueryAsync<Tavnit>(
-                sql: sp,
-                commandType: CommandType.StoredProcedure
-            );
-
-            return tavniyot.ToList();
-        }
-
         public async Task<List<CodTeur>> GetCodTeurTavniyotTEST()
         {
             var sp = "GetCodTeurTavniyot";
@@ -54,21 +41,6 @@ namespace TavniyotBuilder.Api.Services
 
             return codTeurList;
         }
-        public async Task<List<Tavnit>> GetTavniyotByYotzerTEST(int idYotzer)
-        {
-            var sp = "GetTavniyotByYotzer";
-            var parameters = new DynamicParameters();
-            parameters.Add("@IdYotzer", idYotzer, DbType.Int32);
-
-            using var connection = _tavniyotContext.CreateConnection();
-
-            var tavniyot = await connection.QueryAsync<Tavnit>(
-                sql: sp,
-                param: parameters,
-                commandType: CommandType.StoredProcedure
-            );
-
-            return tavniyot.ToList();
-        }
+  
     }
 }
