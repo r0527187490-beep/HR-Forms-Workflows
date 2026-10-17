@@ -1,0 +1,39 @@
+:host {
+  display: block;
+  min-width: 220px;
+}
+
+.sidebar {
+  padding: 16px;
+  background: #f8fafc;
+  border: 1px solid #dbe3ee;
+  border-radius: 10px;
+}
+
+h3 {
+  margin: 0 0 8px;
+  color: #1e293b;
+  font-size: 18px;
+}
+
+.hint {
+  margin: 0 0 16px;
+  color: #64748b;
+  font-size: 13px;
+}
+
+.fields-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-height: 100px;
+}
+
+.palette-item {
+  cursor: grab;
+  touch-action: none;
+}
+
+.palette-item:active {
+  cursor: grabbing;
+}
