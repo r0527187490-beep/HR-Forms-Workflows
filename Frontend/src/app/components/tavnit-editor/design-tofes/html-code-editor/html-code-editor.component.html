@@ -1,1 +1,31 @@
-<p>html-code-editor works!</p>
+<div class="html-editor" id="html-editor">
+  <div class="bar">
+    <div class="file-name">
+      <i class="fa-brands fa-html5 file-icon"></i>
+      <span>form-source.html</span>
+    </div>
+    <div class="actions">
+      <button type="button" id="btn-clear-code" class="btn btn-clear" (click)="confirmClear()">
+        <i class="fa-solid fa-eraser"></i>
+        <span>נקה קוד</span>
+      </button>
+      <button type="button" id="btn-to-visual" class="btn btn-visual" (click)="switchToVisual.emit()">
+        <i class="fa-solid fa-wand-magic-sparkles"></i>
+        <span>שלב לבנייה חזותית</span>
+      </button>
+    </div>
+  </div>
+
+  <textarea
+    pTextarea
+    class="code-area"
+    dir="ltr"
+    spellcheck="false"
+    placeholder="<!-- הדבק כאן קוד HTML -->"
+    [value]="code()"
+    (input)="onInput($event)"
+    (keydown.tab)="onTab($event)"
+  ></textarea>
+</div>
+
+<p-confirmdialog />
