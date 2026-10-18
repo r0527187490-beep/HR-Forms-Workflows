@@ -1,11 +1,49 @@
 
 <aside class="sidebar" dir="rtl">
-  <h3>קטלוג הפקדים</h3>
-  <p class="hint">גררי פקד אל משטח העבודה</p>
 
-  <!-- הפקדים הבסיסיים הקיימים. -->
+  <!-- כותרת הפקדים החכמים -->
+  <p class="section-title">פקדי HR חכמים</p>
+
+  <p *ngIf="loadingSmartFields" class="hint">
+    טוען שדות חכמים...
+  </p>
+
+  <p *ngIf="smartFieldsError" class="hint error">
+    טעינת השדות החכמים נכשלה.
+  </p>
+
   <div
-    class="fields-list"
+    class="fields-list smart-fields"
+    cdkDropList
+    id="smartFieldsPalette"
+    [cdkDropListData]="smartFields"
+    [cdkDropListConnectedTo]="['formCanvas']"
+    [cdkDropListSortingDisabled]="true">
+
+    <div
+      class="palette-item smart-item"
+      *ngFor="let field of smartFields"
+      cdkDrag
+      [cdkDragData]="field">
+
+      <app-draggable-field [field]="field"></app-draggable-field>
+
+    </div>
+  </div>
+
+  <p
+    *ngIf="!loadingSmartFields &&
+           !smartFieldsError &&
+           smartFields.length === 0"
+    class="hint">
+    לא נמצאו שדות HR חכמים.
+  </p>
+
+  <!-- כותרת הפקדים הבסיסיים -->
+  <p class="section-title basic-title">פקדים בסיסיים</p>
+
+  <div
+    class="fields-list basic-fields"
     cdkDropList
     id="palette"
     [cdkDropListData]="fields"
@@ -13,49 +51,14 @@
     [cdkDropListSortingDisabled]="true">
 
     <div
-      class="palette-item"
+      class="palette-item basic-item"
       *ngFor="let field of fields"
       cdkDrag
       [cdkDragData]="field">
 
       <app-draggable-field [field]="field"></app-draggable-field>
+
     </div>
   </div>
 
-  <!-- קטלוג שדות HR שמגיעים מהשרת. -->
-  <h3>פקדי HR חכמים</h3>
-
-  <p *ngIf="loadingSmartFields" class="hint">
-    טוען שדות חכמים...
-  </p>
-
-  <p *ngIf="smartFieldsError" class="hint">
-    טעינת השדות החכמים נכשלה.
-  </p>
-
-  <div
-    class="fields-list"
-    cdkDropList
-    id="smartFieldsPalette"
-    [cdkDropListData]="smartFields"
-    [cdkDropListConnectedTo]="['formCanvas']"
-    [cdkDropListSortingDisabled]="true">
-
-    <!-- כל שדה חכם מוצג כפריט שאפשר לגרור. -->
-    <div
-      class="palette-item"
-      *ngFor="let field of smartFields"
-      cdkDrag
-      [cdkDragData]="field">
-
-      <app-draggable-field [field]="field"></app-draggable-field>
-    </div>
-  </div>
-
-  <!-- מוצג כאשר השרת החזיר רשימה ריקה. -->
-  <p
-    *ngIf="!loadingSmartFields && !smartFieldsError && smartFields.length === 0"
-    class="hint">
-    לא נמצאו שדות HR חכמים.
-  </p>
 </aside>

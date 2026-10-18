@@ -1,137 +1,190 @@
-import { CommonModule } from '@angular/common'; // מאפשר שימוש ב-*ngFor וב-*ngIf בתבנית.
+
+import { CommonModule } from '@angular/common';
 import {
-  Component,   
-  ElementRef,  
+  Component,
+  ElementRef,
   HostListener,
-  ViewChild    
+  ViewChild
 } from '@angular/core';
-import { CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop'; // תמיכה בגרירה ושחרור של פקדים.
+import {
+  CdkDragDrop,
+  CdkDropList
+} from '@angular/cdk/drag-drop';
 
-import { FieldOption } from '../build-drag-sidebar/build-drag-sidebar'; // טיפוס הפקד שמגיע מסרגל הפקדים.
-import { RenderedControl } from './rendered-control/rendered-control'; // קומפוננטה שמציגה פקד בודד.
+import { FieldOption } from '../build-drag-sidebar/build-drag-sidebar';
+import { RenderedControl } from './rendered-control/rendered-control';
 
+// הגדרת פקד שמונח על משטח הטופס.
 type CanvasField = FieldOption & {
-  id: number;     // מזהה ייחודי לפקד.
-  x: number;      // מיקום אופקי.
-  y: number;      // מיקום אנכי.
-  width: number;  // רוחב הפקד.
-  height: number; // גובה הפקד.
+  id: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
 };
 
 @Component({
-  selector: 'app-tofes-canvas', // שם הקומפוננטה לשימוש ב-HTML.
-  standalone: true,             // קומפוננטה עצמאית.
-  imports: [CommonModule, CdkDropList, RenderedControl], // התלויות שהקומפוננטה משתמשת בהן.
-  templateUrl: './tofes-canvas.html', // קובץ ה-HTML.
-  styleUrl: './tofes-canvas.scss'     // קובץ העיצוב.
+  selector: 'app-tofes-canvas',
+  standalone: true,
+  imports: [CommonModule, CdkDropList, RenderedControl],
+  templateUrl: './tofes-canvas.html',
+  styleUrl: './tofes-canvas.scss'
 })
 export class TofesCanvas {
+
+  // הפניה למשטח הטופס ב-HTML.
   @ViewChild('canvasElement', { static: true })
-  canvasElement!: ElementRef<HTMLDivElement>; // הפניה למשטח העבודה ב-HTML.
+  canvasElement!: ElementRef<HTMLDivElement>;
 
-  fields: CanvasField[] = []; // מערך זמני של הפקדים בטופס בזמן העריכה.
-  selectedFieldId: number | null = null; // מזהה הפקד שנבחר כרגע.
+  // הפקדים שנמצאים כרגע על המשטח.
+  fields: CanvasField[] = [];
 
-  canvasWidth: number | null = null; // רוחב המשטח; null פירושו רוחב ברירת מחדל.
-  canvasHeight = 650; // גובה התחלתי של המשטח בפיקסלים.
+  // מזהה הפקד שנבחר.
+  selectedFieldId: number | null = null;
 
-  private nextId = 1; // המספר הבא שיוקצה לפקד חדש.
-  private movingField: CanvasField | null = null; // הפקד שמוזז כרגע.
-  private resizingField: CanvasField | null = null; // הפקד שמשנים את גודלו.
-  private resizingCanvas = false; // האם משנים את גודל המשטח.
+  // גודל התחלתי של משטח הטופס.
+  canvasWidth = 600;
+  canvasHeight = 300;
 
-  private pointerStartX = 0; // מיקום אופקי של העכבר בתחילת הפעולה.
-  private pointerStartY = 0; // מיקום אנכי של העכבר בתחילת הפעולה.
+  // מזהה אוטומטי לפקדים חדשים.
+  private nextId = 1;
 
-  private initialX = 0; // המיקום ההתחלתי של הפקד.
+  // הפקד שנמצא בתהליך הזזה.
+  private movingField: CanvasField | null = null;
+
+  // הפקד שנמצא בתהליך שינוי גודל.
+  private resizingField: CanvasField | null = null;
+
+  // האם משנים את גודל משטח הטופס.
+  private resizingCanvas = false;
+
+  // מיקום העכבר בתחילת הפעולה.
+  private pointerStartX = 0;
+  private pointerStartY = 0;
+
+  // מיקום הפקד בתחילת ההזזה.
+  private initialX = 0;
   private initialY = 0;
-  private initialWidth = 0; // הגודל ההתחלתי של הפקד.
+
+  // מידות הפקד בתחילת שינוי הגודל.
+  private initialWidth = 0;
   private initialHeight = 0;
 
-  private canvasStartWidth = 0; // מידות המשטח בתחילת שינוי הגודל.
-  private canvasStartHeight = 0;
+  // מידות המשטח בתחילת שינוי הגודל.
+  private canvasStartWidth = 600;
+  private canvasStartHeight = 300;
 
+  // הוספת פקד למשטח לאחר גרירה מהסרגל.
   drop(event: CdkDragDrop<CanvasField[], FieldOption[]>): void {
-    const option = event.item.data; // הנתונים של הפקד שנגרר מהסרגל.
+    const option = event.item.data;
 
+    // אם אין נתונים, לא מוסיפים פקד.
     if (!option) {
-      return; // אין פקד, ולכן לא ממשיכים.
+      return;
     }
 
-    const canvas = this.canvasElement.nativeElement; // משטח העבודה.
-    const rect = canvas.getBoundingClientRect(); // המיקום של המשטח במסך.
+    const canvas = this.canvasElement.nativeElement;
+    const rect = canvas.getBoundingClientRect();
 
-    const width = 260; // רוחב ברירת מחדל לפקד חדש.
-    const height = 110; // גובה ברירת מחדל לפקד חדש.
+    // גודל ברירת המחדל של פקד חדש.
+    const width = 260;
+    const height = 110;
 
-    let x = event.dropPoint.x - rect.left - width / 2; // חישוב המיקום האופקי.
-    let y = event.dropPoint.y - rect.top - 25; // חישוב המיקום האנכי.
+    // חישוב מיקום הפקד בתוך המשטח.
+    let x = event.dropPoint.x - rect.left - width / 2;
+    let y = event.dropPoint.y - rect.top - 25;
 
-    x = this.clamp(x, 0, Math.max(0, canvas.clientWidth - width)); // הפקד נשאר בתוך המשטח.
-    y = this.clamp(y, 0, Math.max(0, canvas.clientHeight - height));
+    // שמירה על הפקד בתוך גבולות המשטח.
+    x = this.clamp(
+      x,
+      0,
+      Math.max(0, canvas.clientWidth - width)
+    );
 
+    y = this.clamp(
+      y,
+      0,
+      Math.max(0, canvas.clientHeight - height)
+    );
+
+    // יצירת הפקד החדש.
     const newField: CanvasField = {
-      ...option,          // העתקת פרטי הפקד מהסרגל.
-      id: this.nextId++,  // הקצאת מזהה חדש.
-      x,                  // מיקום אופקי.
-      y,                  // מיקום אנכי.
-      width,              // רוחב.
-      height              // גובה.
+      ...option,
+      id: this.nextId++,
+      x,
+      y,
+      width,
+      height
     };
 
-    this.fields = [...this.fields, newField]; // הוספת הפקד למערך הזמני.
-    this.selectedFieldId = newField.id; // בחירת הפקד החדש.
+    // הוספת הפקד למערך ובחירתו.
+    this.fields = [...this.fields, newField];
+    this.selectedFieldId = newField.id;
   }
 
+  // בחירת פקד בלחיצה עליו.
   selectField(event: PointerEvent, field: CanvasField): void {
-    event.stopPropagation(); // מניעת העברת האירוע למשטח.
-    this.selectedFieldId = field.id; // סימון הפקד כנבחר.
+    event.stopPropagation();
+    this.selectedFieldId = field.id;
   }
 
+  // ביטול הבחירה בלחיצה על שטח ריק.
   clearSelection(): void {
-    if (!this.movingField && !this.resizingField && !this.resizingCanvas) {
-      this.selectedFieldId = null; // ביטול הבחירה אם לא מתבצעת פעולה.
+    if (
+      !this.movingField &&
+      !this.resizingField &&
+      !this.resizingCanvas
+    ) {
+      this.selectedFieldId = null;
     }
   }
 
+  // התחלת הזזת פקד.
   startMove(event: PointerEvent, field: CanvasField): void {
-    if (event.button !== 0 || this.resizingField || this.resizingCanvas) {
-      return; // מונע התחלת הזזה בלחצן לא מתאים או בזמן שינוי גודל.
-    }
-
-    event.preventDefault(); // מניעת התנהגות ברירת מחדל של הדפדפן.
-    event.stopPropagation(); // מניעת הפצת האירוע.
-
-    this.selectedFieldId = field.id; // בחירת הפקד.
-    this.movingField = field; // סימון הפקד כמיועד להזזה.
-
-    this.pointerStartX = event.clientX; // שמירת מיקום העכבר ההתחלתי.
-    this.pointerStartY = event.clientY;
-
-    this.initialX = field.x; // שמירת מיקום הפקד לפני ההזזה.
-    this.initialY = field.y;
-  }
-
-  startResize(event: PointerEvent, field: CanvasField): void {
-    if (event.button !== 0) {
-      return; // רק לחיצה שמאלית מתחילה שינוי גודל.
+    if (
+      event.button !== 0 ||
+      this.resizingField ||
+      this.resizingCanvas
+    ) {
+      return;
     }
 
     event.preventDefault();
     event.stopPropagation();
 
-    this.selectedFieldId = field.id; // בחירת הפקד.
-    this.movingField = null; // ביטול מצב הזזה.
-    this.resizingField = field; // הפקד שגודלו משתנה.
+    this.selectedFieldId = field.id;
+    this.movingField = field;
 
-    this.pointerStartX = event.clientX; // מיקום העכבר בתחילת השינוי.
+    // שמירת מיקום העכבר והפקד.
+    this.pointerStartX = event.clientX;
     this.pointerStartY = event.clientY;
 
-    this.initialWidth = field.width; // שמירת הגודל ההתחלתי.
+    this.initialX = field.x;
+    this.initialY = field.y;
+  }
+
+  // התחלת שינוי גודל של פקד.
+  startResize(event: PointerEvent, field: CanvasField): void {
+    if (event.button !== 0) {
+      return;
+    }
+
+    event.preventDefault();
+    event.stopPropagation();
+
+    this.selectedFieldId = field.id;
+    this.movingField = null;
+    this.resizingField = field;
+
+    // שמירת מיקום העכבר והמידות ההתחלתיות.
+    this.pointerStartX = event.clientX;
+    this.pointerStartY = event.clientY;
+
+    this.initialWidth = field.width;
     this.initialHeight = field.height;
   }
 
-  // התחלת שינוי הגודל של כל משטח העבודה.
+  // התחלת שינוי גודל משטח הטופס.
   startCanvasResize(event: PointerEvent): void {
     if (event.button !== 0) {
       return;
@@ -140,96 +193,151 @@ export class TofesCanvas {
     event.preventDefault();
     event.stopPropagation();
 
-    const canvas = this.canvasElement.nativeElement; // משטח העבודה.
+    const canvas = this.canvasElement.nativeElement;
 
-    this.selectedFieldId = null; // ביטול בחירת הפקד.
+    this.selectedFieldId = null;
     this.movingField = null;
     this.resizingField = null;
-    this.resizingCanvas = true; // הפעלת מצב שינוי גודל המשטח.
+    this.resizingCanvas = true;
 
-    this.pointerStartX = event.clientX; // מיקום העכבר בתחילת הפעולה.
+    // שמירת מיקום העכבר.
+    this.pointerStartX = event.clientX;
     this.pointerStartY = event.clientY;
 
-    this.canvasStartWidth = canvas.clientWidth; // שמירת המידות ההתחלתיות.
+    // שמירת המידות הנוכחיות.
+    this.canvasStartWidth = canvas.clientWidth;
     this.canvasStartHeight = canvas.clientHeight;
 
-    this.canvasWidth = this.canvasStartWidth; // קביעת הרוחב ההתחלתי.
+    this.canvasWidth = this.canvasStartWidth;
     this.canvasHeight = this.canvasStartHeight;
   }
 
-  @HostListener('document:pointermove', ['$event']) // האזנה לתנועת העכבר בכל המסמך.
+  // טיפול בתנועת העכבר במהלך גרירה ושינוי גודל.
+  @HostListener('document:pointermove', ['$event'])
   onPointerMove(event: PointerEvent): void {
-    const deltaX = event.clientX - this.pointerStartX; // המרחק שהעכבר זז אופקית.
-    const deltaY = event.clientY - this.pointerStartY; // המרחק שהעכבר זז אנכית.
+    const deltaX = event.clientX - this.pointerStartX;
+    const deltaY = event.clientY - this.pointerStartY;
 
+    const canvas = this.canvasElement.nativeElement;
+
+    // שינוי גודל משטח הטופס.
     if (this.resizingCanvas) {
+
+      // מניעת חיתוך של פקדים קיימים.
       const minWidth = Math.max(
         400,
         ...this.fields.map(field => field.x + field.width + 20)
-      ); // רוחב מינימלי שמונע חיתוך של פקדים.
+      );
 
       const minHeight = Math.max(
         300,
         ...this.fields.map(field => field.y + field.height + 20)
-      ); // גובה מינימלי שמונע חיתוך של פקדים.
+      );
 
+      // עדכון רוחב המשטח.
       this.canvasWidth = this.clamp(
-        this.canvasStartWidth + deltaX, minWidth, 2000
-      ); // עדכון הרוחב תוך הגבלת המידות.
+        this.canvasStartWidth + deltaX,
+        minWidth,
+        2000
+      );
 
+      // עדכון גובה המשטח.
       this.canvasHeight = this.clamp(
-        this.canvasStartHeight + deltaY, minHeight, 1600
-      ); // עדכון הגובה תוך הגבלת המידות.
+        this.canvasStartHeight + deltaY,
+        minHeight,
+        1600
+      );
 
-      return; // לא ממשיכים לטיפול בהזזת פקד.
-    }
-
-    const canvas = this.canvasElement.nativeElement;
-
-    if (this.movingField) {
-      const field = this.movingField; // הפקד שמזיזים.
-
-      const maxX = Math.max(0, canvas.clientWidth - field.width); // הגבול הימני.
-      const maxY = Math.max(0, canvas.clientHeight - field.height); // הגבול התחתון.
-
-      field.x = this.clamp(this.initialX + deltaX, 0, maxX); // עדכון המיקום האופקי.
-      field.y = this.clamp(this.initialY + deltaY, 0, maxY); // עדכון המיקום האנכי.
       return;
     }
 
-    if (this.resizingField) {
-      const field = this.resizingField; // הפקד שמשנים את גודלו.
+    // הזזת פקד.
+    if (this.movingField) {
+      const field = this.movingField;
 
-      const maxWidth = Math.max(180, canvas.clientWidth - field.x); // הרוחב המרבי.
-      const maxHeight = Math.max(70, canvas.clientHeight - field.y); // הגובה המרבי.
+      const maxX = Math.max(
+        0,
+        canvas.clientWidth - field.width
+      );
+
+      const maxY = Math.max(
+        0,
+        canvas.clientHeight - field.height
+      );
+
+      field.x = this.clamp(
+        this.initialX + deltaX,
+        0,
+        maxX
+      );
+
+      field.y = this.clamp(
+        this.initialY + deltaY,
+        0,
+        maxY
+      );
+
+      return;
+    }
+
+    // שינוי גודל של פקד.
+    if (this.resizingField) {
+      const field = this.resizingField;
+
+      const maxWidth = Math.max(
+        180,
+        canvas.clientWidth - field.x
+      );
+
+      const maxHeight = Math.max(
+        70,
+        canvas.clientHeight - field.y
+      );
 
       field.width = this.clamp(
-        this.initialWidth + deltaX, 180, maxWidth
-      ); // עדכון הרוחב תוך שמירה על גבולות.
+        this.initialWidth + deltaX,
+        180,
+        maxWidth
+      );
 
       field.height = this.clamp(
-        this.initialHeight + deltaY, 70, maxHeight
-      ); // עדכון הגובה תוך שמירה על גבולות.
+        this.initialHeight + deltaY,
+        70,
+        maxHeight
+      );
     }
   }
 
-  @HostListener('document:pointerup') // סיום הפעולה כשהעכבר משתחרר.
-  @HostListener('document:pointercancel') // סיום אם פעולת העכבר מתבטלת.
+  // סיום הפעולה כשהעכבר משתחרר או כשהפעולה מתבטלת.
+  @HostListener('document:pointerup')
+  @HostListener('document:pointercancel')
   onPointerUp(): void {
-    this.movingField = null; // הפסקת הזזת הפקד.
-    this.resizingField = null; // הפסקת שינוי גודל הפקד.
-    this.resizingCanvas = false; // הפסקת שינוי גודל המשטח.
+    this.movingField = null;
+    this.resizingField = null;
+    this.resizingCanvas = false;
   }
 
+  // מחיקת פקד מהמשטח.
   removeField(id: number): void {
-    this.fields = this.fields.filter(field => field.id !== id); // הסרת הפקד מהמערך.
+    this.fields = this.fields.filter(
+      field => field.id !== id
+    );
 
+    // ביטול הבחירה אם הפקד שנמחק היה נבחר.
     if (this.selectedFieldId === id) {
-      this.selectedFieldId = null; // ביטול הבחירה אם הפקד שנמחק היה נבחר.
+      this.selectedFieldId = null;
     }
   }
 
-  private clamp(value: number, min: number, max: number): number {
-    return Math.min(Math.max(value, min), Math.max(min, max)); // הגבלת ערך לטווח מותר.
+  // הגבלת מספר לטווח המותר.
+  private clamp(
+    value: number,
+    min: number,
+    max: number
+  ): number {
+    return Math.min(
+      Math.max(value, min),
+      Math.max(min, max)
+    );
   }
 }

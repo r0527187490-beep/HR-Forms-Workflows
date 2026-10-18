@@ -1,39 +1,121 @@
+
 :host {
   display: block;
-  min-width: 220px;
+  flex: 0 0 160px;
+  width: 160px;
+  min-width: 160px;
+  height: 100%;
+  box-sizing: border-box;
+  background: #fff;
+  border-left: 1px solid #e5ebf3;
+  font-family: Arial, sans-serif;
+  color: #344054;
 }
 
 .sidebar {
-  padding: 16px;
-  background: #f8fafc;
-  border: 1px solid #dbe3ee;
-  border-radius: 10px;
+  direction: rtl;
+  width: 120%;
+  height: 100%;
+  min-height: 100%;
+  padding: 10px 8px;
+  box-sizing: border-box;
+  background: #fff;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-h3 {
-  margin: 0 0 8px;
-  color: #1e293b;
-  font-size: 18px;
-}
-
-.hint {
-  margin: 0 0 16px;
-  color: #64748b;
-  font-size: 13px;
+.section-title {
+  margin: 0 0 9px;
+  padding: 0;
+  color: #8492a6;
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 15px;
+  text-align: right;
 }
 
 .fields-list {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  min-height: 100px;
+  display: grid;
+  width: 100%;
+  min-width: 0;
+  gap: 5px;
+  align-items: stretch;
+}
+
+.smart-fields {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.basic-title {
+  margin-top: 17px;
+  margin-bottom: 8px;
+}
+
+.basic-fields {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 5px;
 }
 
 .palette-item {
+  display: block;
+  min-width: 0;
+  width: 100%;
+  box-sizing: border-box;
   cursor: grab;
-  touch-action: none;
+}
+
+.smart-item {
+  min-height: 28px;
+  padding: 3px;
+  background: #edf4ff;
+  border: 1px solid #cfe0ff;
+  border-radius: 5px;
+}
+
+.basic-item {
+  min-height: 20px;
+  min-width: 52px;
+  padding: 5px;
+  background: #fff;
+  border: 1px solid #e7edf5;
+  border-radius: 6px;
+}
+
+
+.palette-item app-draggable-field {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+.smart-item:hover,
+.basic-item:hover {
+  border-color: #a9caff;
 }
 
 .palette-item:active {
   cursor: grabbing;
+}
+
+.hint {
+  margin: 5px 0;
+  color: #8996a8;
+  font-size: 10px;
+  line-height: 1.5;
+}
+
+.hint.error {
+  color: #d14343;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border: 1px solid #cfe0ff;
+  border-radius: 5px;
+  background: #edf4ff;
+  box-shadow: 0 3px 10px rgb(35 70 120 / 12%);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.25;
 }

@@ -34,7 +34,7 @@ export class BuildDragSidebar implements OnInit {
   private readonly tavniyotService = inject(TavniyotService);
 
   fields: FieldOption[] = [
-    { type: 'text', label: 'שורת טקסט' },
+    { type: 'text', label: 'טקסט קצר' },
     { type: 'textarea', label: 'פסקה' },
     { type: 'date', label: 'תאריך' },
     { type: 'file', label: 'העלאת קובץ' }
