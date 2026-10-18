@@ -244,6 +244,8 @@ namespace TavniyotBuilder.Api.Services
                     errors.Add($"Control {control.Id} has no label");
                 }
 
+                ValidateLayout(control, errors);
+
                 if (control.SmartFieldKey != null)
                 {
                     ValidateSmartFieldControl(control, smartFields, smartFieldKeys, errors);
@@ -255,6 +257,25 @@ namespace TavniyotBuilder.Api.Services
             }
 
             return errors;
+        }
+
+        private static void ValidateLayout(FormControl control, List<string> errors)
+        {
+            if (control.X == null || control.Y == null || control.Width == null || control.Height == null)
+            {
+                errors.Add($"Control {control.Id} must have x, y, width and height");
+                return;
+            }
+
+            if (control.X < 0 || control.Y < 0)
+            {
+                errors.Add($"Control {control.Id}: x and y cannot be negative");
+            }
+
+            if (control.Width <= 0 || control.Height <= 0)
+            {
+                errors.Add($"Control {control.Id}: width and height must be greater than 0");
+            }
         }
 
         private static void ValidateSmartFieldControl(FormControl control, List<FormControl> smartFields, HashSet<string> smartFieldKeys, List<string> errors)
