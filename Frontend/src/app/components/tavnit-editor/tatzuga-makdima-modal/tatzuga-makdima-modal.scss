@@ -1,0 +1,85 @@
+/* שכבת הרקע */
+.preview-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.45);
+}
+
+/* חלון התצוגה */
+.preview-modal {
+  display: flex;
+  flex-direction: column;
+  width: min(1000px, 95vw);
+  max-height: 90vh;
+  min-height: 0;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 35px rgba(0, 0, 0, 0.2);
+  overflow: hidden;
+}
+
+/* כותרת */
+.preview-header {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.preview-header h2 {
+  margin: 0;
+  font-size: 20px;
+}
+
+.preview-header button {
+  border: none;
+  background: transparent;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* אזור גלילה */
+.preview-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  padding: 24px;
+  background: #f5f6f8;
+}
+
+/* הקנבס שומר על מערכת הקואורדינטות המקורית */
+.preview-canvas {
+  position: relative;
+  box-sizing: border-box;
+  flex-shrink: 0;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid #d1d5db;
+}
+
+/* כל פקד ממוקם באופן עצמאי */
+.preview-field {
+  position: absolute;
+  box-sizing: border-box;
+}
+
+/* הפקד ממלא את המעטפת שהוגדרה לו */
+.preview-field app-rendered-control {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* הודעה כשאין פקדים */
+.empty-preview {
+  text-align: center;
+  color: #6b7280;
+}

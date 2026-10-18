@@ -1,1 +1,195 @@
-<p>tavnit-editor works!</p>
+
+<div class="tavnit-editor" dir="rtl">
+
+  <!-- סרגל עליון -->
+  <header class="top-header">
+
+    <div class="header-actions" dir="ltr">
+
+      <!-- פרסום הטופס -->
+      <button
+        type="button"
+        class="header-button publish-button"
+        (click)="publishForm()">
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 15V3"/>
+          <path d="m7 8 5-5 5 5"/>
+          <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/>
+        </svg>
+
+        <span>פרסם טופס</span>
+      </button>
+
+      <!-- תצוגה מקדימה -->
+      <button
+        type="button"
+        class="header-button preview-button"
+        (click)="openPreview()">
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/>
+          <circle cx="12" cy="12" r="3"/>
+        </svg>
+
+        <span>תצוגה מקדימה</span>
+      </button>
+
+    </div>
+
+    <!-- כותרת הטופס -->
+    <div class="header-title" dir="rtl">
+
+      <!-- חזרה -->
+      <a
+        class="back-link"
+        href=""
+        aria-label="חזרה"
+        (click)="onBackLink($event)">
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m15 5 7 7-7 7"/>
+          <path d="M22 12H7"/>
+        </svg>
+      </a>
+
+      <!-- אייקון הטופס: לחיצה עליו פותחת עריכת שם -->
+      <button
+        type="button"
+        class="title-icon"
+        aria-label="עריכת שם הטופס"
+        title="עריכת שם הטופס"
+        (click)="startEditingName()">
+
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8Z"/>
+          <path d="M14 2v6h6"/>
+          <path d="m9 16 1-3 6-6 2 2-6 6-3 1Z"/>
+        </svg>
+
+      </button>
+
+      <!-- שם הטופס -->
+      <div class="form-name-editor">
+
+        <!-- מילה קבועה שאינה ניתנת לעריכה -->
+        <span class="form-name-prefix">טופס</span>
+
+        <!-- שדה עריכת שם הטופס -->
+        <input
+          *ngIf="isEditingName"
+          #nameInput
+          type="text"
+          class="form-name-input"
+          [(ngModel)]="shemTofes"
+          maxlength="250"
+          placeholder="עריכת שם הטופס"
+          aria-label="שם הטופס"
+          (blur)="finishEditingName()"
+          (keydown.enter)="finishEditingName()"
+          (keydown.escape)="cancelEditingName()"
+        />
+
+        <!-- הצגת שם הטופס במצב רגיל -->
+        <span
+          *ngIf="!isEditingName"
+          class="form-name-value"
+          [class.placeholder]="!shemTofes">
+          {{ shemTofes || 'עריכת שם הטופס' }}
+        </span>
+
+      </div>
+
+    </div>
+
+  </header>
+
+  <!-- ניווט -->
+  <nav class="editor-navigation">
+    <div class="navigation-links">
+
+      <a
+        href=""
+        class="navigation-link active"
+        (click)="openFormDesign($event)">
+        עיצוב הטופס
+      </a>
+
+      <a
+        href=""
+        class="navigation-link"
+        (click)="openWorkflows($event)">
+        מסלול אישורים (Workflows)
+      </a>
+
+    </div>
+  </nav>
+
+  <!-- לשוניות העורך -->
+  <div class="builder-tabs-row">
+    <div
+      class="builder-tabs"
+      role="tablist"
+      aria-label="מצב עריכת הטופס">
+
+      <button
+        type="button"
+        role="tab"
+        id="drag-builder-tab"
+        class="builder-tab"
+        [class.selected]="activeTab === 'builder'"
+        [attr.aria-selected]="activeTab === 'builder'"
+        aria-controls="builder-panel"
+        (click)="selectTab('builder')">
+        בנייה בגרירה
+      </button>
+
+      <button
+        type="button"
+        role="tab"
+        id="html-code-tab"
+        class="builder-tab"
+        [class.selected]="activeTab === 'html'"
+        [attr.aria-selected]="activeTab === 'html'"
+        aria-controls="builder-panel"
+        (click)="selectTab('html')">
+        קוד HTML
+      </button>
+
+    </div>
+  </div>
+
+  <!-- תוכן העורך -->
+  <main
+    id="builder-panel"
+    class="builder-content"
+    role="tabpanel"
+    [attr.aria-labelledby]="activeTab === 'builder' ? 'drag-builder-tab' : 'html-code-tab'">
+
+    <!-- בנייה בגרירה -->
+    <section *ngIf="activeTab === 'builder'">
+      <app-design-tofes
+        (fieldsChange)="onPreviewFieldsChange($event)"
+        (canvasSizeChange)="onPreviewCanvasSizeChange($event)">
+      </app-design-tofes>
+    </section>
+
+    <!-- אזור קוד HTML -->
+    <section *ngIf="activeTab === 'html'">
+      <div class="html-editor-placeholder" dir="rtl">
+        אזור עריכת קוד HTML
+      </div>
+    </section>
+
+  </main>
+
+  <!-- חלון תצוגה מקדימה -->
+  <app-tatzuga-makdima-modal
+    [fields]="previewFields"
+    [canvasWidth]="previewCanvasWidth"
+    [canvasHeight]="previewCanvasHeight"
+    [isOpen]="isPreviewOpen"
+    (closed)="closePreview()">
+  </app-tatzuga-makdima-modal>
+
+</div>

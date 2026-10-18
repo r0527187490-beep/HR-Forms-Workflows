@@ -4,7 +4,9 @@ import {
   Component,
   ElementRef,
   HostListener,
-  ViewChild
+  ViewChild,
+  Output,
+  EventEmitter
 } from '@angular/core';
 import {
   CdkDragDrop,
@@ -38,6 +40,15 @@ export class TofesCanvas {
 
   // הפקדים שנמצאים כרגע על המשטח.
   fields: CanvasField[] = [];
+
+  // שליחת הפקדים לקומפוננטה העוטפת.
+  @Output() fieldsChange = new EventEmitter<CanvasField[]>();
+
+  // שליחת מידות הקנבס.
+  @Output() canvasSizeChange = new EventEmitter<{
+    width: number;
+    height: number;
+  }>();
 
   // מזהה הפקד שנבחר.
   selectedFieldId: number | null = null;
@@ -74,11 +85,22 @@ export class TofesCanvas {
   private canvasStartWidth = 600;
   private canvasStartHeight = 300;
 
+  // שליחת מצב הקנבס המעודכן.
+  private emitCanvasState(): void {
+    this.fieldsChange.emit(
+      this.fields.map(field => ({ ...field }))
+    );
+
+    this.canvasSizeChange.emit({
+      width: this.canvasWidth,
+      height: this.canvasHeight
+    });
+  }
+
   // הוספת פקד למשטח לאחר גרירה מהסרגל.
   drop(event: CdkDragDrop<CanvasField[], FieldOption[]>): void {
     const option = event.item.data;
 
-    // אם אין נתונים, לא מוסיפים פקד.
     if (!option) {
       return;
     }
@@ -117,9 +139,12 @@ export class TofesCanvas {
       height
     };
 
-    // הוספת הפקד למערך ובחירתו.
+    // הוספת הפקד ובחירתו.
     this.fields = [...this.fields, newField];
     this.selectedFieldId = newField.id;
+
+    // שליחת המצב המעודכן.
+    this.emitCanvasState();
   }
 
   // בחירת פקד בלחיצה עליו.
@@ -222,8 +247,6 @@ export class TofesCanvas {
 
     // שינוי גודל משטח הטופס.
     if (this.resizingCanvas) {
-
-      // מניעת חיתוך של פקדים קיימים.
       const minWidth = Math.max(
         400,
         ...this.fields.map(field => field.x + field.width + 20)
@@ -234,20 +257,19 @@ export class TofesCanvas {
         ...this.fields.map(field => field.y + field.height + 20)
       );
 
-      // עדכון רוחב המשטח.
       this.canvasWidth = this.clamp(
         this.canvasStartWidth + deltaX,
         minWidth,
         2000
       );
 
-      // עדכון גובה המשטח.
       this.canvasHeight = this.clamp(
         this.canvasStartHeight + deltaY,
         minHeight,
         1600
       );
 
+      this.emitCanvasState();
       return;
     }
 
@@ -277,6 +299,7 @@ export class TofesCanvas {
         maxY
       );
 
+      this.emitCanvasState();
       return;
     }
 
@@ -305,6 +328,8 @@ export class TofesCanvas {
         70,
         maxHeight
       );
+
+      this.emitCanvasState();
     }
   }
 
@@ -323,10 +348,11 @@ export class TofesCanvas {
       field => field.id !== id
     );
 
-    // ביטול הבחירה אם הפקד שנמחק היה נבחר.
     if (this.selectedFieldId === id) {
       this.selectedFieldId = null;
     }
+
+    this.emitCanvasState();
   }
 
   // הגבלת מספר לטווח המותר.

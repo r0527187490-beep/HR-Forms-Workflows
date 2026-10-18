@@ -1,17 +1,23 @@
-
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CodTeur } from '../models/cod-teur';
 import { Tavnit } from '../models/tavnit';
-import { FormControl} from '../models/form-control';
+import { FormControl } from '../models/form-control';
+
+// המבנה שנשלח לשרת בעת שמירת תבנית.
+export interface FormDetails {
+  shemTofes: string;
+  form: {
+    controls: FormControl[];
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class TavniyotService {
   private http = inject(HttpClient);
 
-  // כתובת הבסיס של בקר התבניות, לפי ההגדרה הקיימת בפרויקט.
   private baseUrl = `${environment.url}Tavniyot`;
 
   getAllTavniyotTest(): Observable<Tavnit[]> {
@@ -26,10 +32,17 @@ export class TavniyotService {
     );
   }
 
-  // מביא מהשרת את הגדרות שדות ה-HR החכמים.
   GetSmartFieldsList(): Observable<FormControl[]> {
     return this.http.get<FormControl[]>(
       `${this.baseUrl}/GetSmartFieldsList`
+    );
+  }
+
+  // שמירת הטופס בשרת.
+  saveForm(details: FormDetails): Observable<unknown> {
+    return this.http.post<unknown>(
+      `${this.baseUrl}/SaveForm`,
+      details
     );
   }
 }

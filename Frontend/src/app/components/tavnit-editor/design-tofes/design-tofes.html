@@ -1,10 +1,13 @@
-<!-- מגדיר את כל אזור עיצוב הטופס בכיווניות מימין לשמאל. -->
+<!-- אזור עיצוב הטופס בכיווניות מימין לשמאל -->
 <div class="designer-layout" dir="rtl">
 
-  <!-- סרגל הפקדים נמצא בצד ימין. -->
+  <!-- סרגל הפקדים -->
   <app-build-drag-sidebar></app-build-drag-sidebar>
 
-  <!-- משטח העבודה תופס את השטח המרכזי והרחב. -->
-  <app-tofes-canvas></app-tofes-canvas>
+  <!-- משטח הטופס -->
+  <app-tofes-canvas
+    (fieldsChange)="onFieldsChange($event)"
+    (canvasSizeChange)="updateCanvasSize($event)">
+  </app-tofes-canvas>
 
 </div>
