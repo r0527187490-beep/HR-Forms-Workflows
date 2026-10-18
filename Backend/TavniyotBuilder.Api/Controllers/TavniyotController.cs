@@ -107,5 +107,52 @@ namespace TavniyotBuilder.Api.Controllers
             }
         }
 
+        [Authorize]
+        [HttpPost("SaveForm")]
+        public async Task<IActionResult> SaveForm(FormDetails formDetails)
+        {
+            try
+            {
+                string idUserString = Utils.GetUserId(HttpContext);
+
+                if (!int.TryParse(idUserString, out int idUser))
+                {
+                    return Unauthorized("Invalid user ID");
+                }
+
+                FormDetails savedForm = await _tavniyotRepository.SaveForm(formDetails, idUser);
+
+                return Ok(savedForm);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(SaveForm)} Exception: {ex.Message}");
+            }
+        }
+
+        [Authorize]
+        [HttpGet("GetForm")]
+        public async Task<IActionResult> GetForm(int idRecTavnit)
+        {
+            try
+            {
+                FormDetails formDetails = await _tavniyotRepository.GetForm(idRecTavnit);
+
+                return Ok(formDetails);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(GetForm)} Exception: {ex.Message}");
+            }
+        }
+
     }
 }

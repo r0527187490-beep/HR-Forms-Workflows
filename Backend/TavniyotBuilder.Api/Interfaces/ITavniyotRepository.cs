@@ -9,5 +9,7 @@ namespace TavniyotBuilder.Api.Interfaces
         List<FormControl> GetBasicControlsList();
         Task<string> PrepareFormForSave(FormStructure form);
         FormStructure RestoreFormStructure(string mivneJson);
+        Task<FormDetails> SaveForm(FormDetails formDetails, int idYotzer);
+        Task<FormDetails> GetForm(int idRecTavnit);
     }
 }

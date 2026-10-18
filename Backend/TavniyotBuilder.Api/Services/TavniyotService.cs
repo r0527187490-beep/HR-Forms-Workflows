@@ -132,6 +132,88 @@ namespace TavniyotBuilder.Api.Services
             }
         }
 
+        public async Task<FormDetails> SaveForm(FormDetails formDetails, int idYotzer)
+        {
+            if (string.IsNullOrWhiteSpace(formDetails.ShemTofes))
+            {
+                throw new ArgumentException("The form has no name");
+            }
+
+            if (formDetails.ShemTofes.Trim().Length > 255)
+            {
+                throw new ArgumentException("The form name is too long (up to 255 characters)");
+            }
+
+            if (formDetails.Form == null)
+            {
+                throw new ArgumentException("The form has no controls");
+            }
+
+            string mivneJson = await PrepareFormForSave(formDetails.Form);
+            bool isKolelShdotChachamim = formDetails.Form.Controls.Any(control => control.SmartFieldKey != null);
+
+            int? idRecTavnit = formDetails.IdRecTavnit > 0 ? formDetails.IdRecTavnit : null;
+
+            var sp = "SaveTofes";
+            var parameters = new DynamicParameters();
+            parameters.Add("@IdRecTavnit", idRecTavnit, DbType.Int32);
+            parameters.Add("@ShemTofes", formDetails.ShemTofes.Trim(), DbType.String, size: 255);
+            parameters.Add("@Teur", formDetails.Teur, DbType.String, size: -1);
+            parameters.Add("@IsKolelShdotChachamim", isKolelShdotChachamim, DbType.Boolean);
+            parameters.Add("@MivneJson", mivneJson, DbType.String, size: -1);
+            parameters.Add("@IdYotzer", idYotzer, DbType.Int32);
+
+            using var connection = _tavniyotContext.CreateConnection();
+
+            var savedForm = await connection.QuerySingleOrDefaultAsync<FormDetails>(
+                sql: sp,
+                param: parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            if (savedForm == null)
+            {
+                throw new ArgumentException($"Form {formDetails.IdRecTavnit} was not found");
+            }
+
+            return savedForm;
+        }
+
+        public async Task<FormDetails> GetForm(int idRecTavnit)
+        {
+            var sp = "GetTofes";
+            var parameters = new DynamicParameters();
+            parameters.Add("@IdRecTavnit", idRecTavnit, DbType.Int32);
+
+            using var connection = _tavniyotContext.CreateConnection();
+
+            var data = await connection.QuerySingleOrDefaultAsync(
+                sql: sp,
+                param: parameters,
+                commandType: CommandType.StoredProcedure
+            );
+
+            if (data == null)
+            {
+                throw new ArgumentException($"Form {idRecTavnit} was not found");
+            }
+
+            if (data.MivneJson == null)
+            {
+                throw new ArgumentException($"Form {idRecTavnit} was not built in drag mode, so it has no controls structure");
+            }
+
+            return new FormDetails
+            {
+                IdRecTavnit = data.IdRecTavnit,
+                ShemTofes = data.ShemTofes,
+                Teur = data.Teur,
+                IdRecTofesVersion = data.IdRecTofesVersion,
+                MisparGirsa = data.MisparGirsa,
+                Form = RestoreFormStructure((string)data.MivneJson)
+            };
+        }
+
         private async Task<List<string>> ValidateFormStructure(FormStructure? form)
         {
             var errors = new List<string>();
