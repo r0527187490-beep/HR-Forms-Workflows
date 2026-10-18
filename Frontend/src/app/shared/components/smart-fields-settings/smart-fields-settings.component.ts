@@ -29,34 +29,58 @@ export class SmartFieldsSettingsComponent {
 
   dialogVisible = false;
   isEdit = false;
+  submitted = false;
   draft: SmartField = this.emptyField();
 
+  get shemError(): string {
+    return this.draft.shemSadeh.trim() ? '' : 'שם שדה הוא שדה חובה';
+  }
+
+  get dataKeyError(): string {
+    const v = this.draft.dataKey.trim();
+    if (!v) return 'מפתח נתון הוא שדה חובה';
+    if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(v)) {
+      return 'באנגלית בלבד, מתחיל באות, בלי רווחים (למשל fullName)';
+    }
+    const exists = this.fields().some(
+      f => f.idRec !== this.draft.idRec && f.dataKey.toLowerCase() === v.toLowerCase());
+    return exists ? 'מפתח נתון זה כבר קיים' : '';
+  }
+
   get isValid(): boolean {
-    return this.draft.shemSadeh.trim() !== '' && this.draft.dataKey.trim() !== '';
+    return !this.shemError && !this.dataKeyError;
   }
 
   openAdd(): void {
     this.draft = this.emptyField();
     this.isEdit = false;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
   openEdit(field: SmartField): void {
     this.draft = { ...field };
     this.isEdit = true;
+    this.submitted = false;
     this.dialogVisible = true;
   }
 
   save(): void {
+    this.submitted = true;
     if (!this.isValid) return;
+    const clean: SmartField = {
+      ...this.draft,
+      shemSadeh: this.draft.shemSadeh.trim(),
+      dataKey: this.draft.dataKey.trim(),
+    };
     if (this.isEdit) {
-      this.fields.update(list =>
-        list.map(f => (f.idRec === this.draft.idRec ? { ...this.draft } : f)));
+      this.fields.update(list => list.map(f => (f.idRec === clean.idRec ? clean : f)));
     } else {
       const nextId = Math.max(0, ...this.fields().map(f => f.idRec)) + 1;
-      this.fields.update(list => [...list, { ...this.draft, idRec: nextId }]);
+      this.fields.update(list => [...list, { ...clean, idRec: nextId }]);
     }
     this.dialogVisible = false;
+    this.submitted = false;
   }
 
   confirmDelete(field: SmartField): void {

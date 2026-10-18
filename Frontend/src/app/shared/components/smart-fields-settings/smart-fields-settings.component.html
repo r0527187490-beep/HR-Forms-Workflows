@@ -43,10 +43,14 @@
   [style]="{ width: '28rem' }">
   <div class="form">
     <label for="shemSadeh">שם שדה</label>
-    <input pInputText id="shemSadeh" [(ngModel)]="draft.shemSadeh" />
+    <input pInputText id="shemSadeh" maxlength="100"
+           [class.invalid]="submitted && shemError" [(ngModel)]="draft.shemSadeh" />
+    @if (submitted && shemError) { <small class="error">{{ shemError }}</small> }
 
     <label for="dataKey">מפתח נתון (DataKey)</label>
-    <input pInputText id="dataKey" dir="ltr" [(ngModel)]="draft.dataKey" />
+    <input pInputText id="dataKey" dir="ltr" maxlength="100"
+           [class.invalid]="submitted && dataKeyError" [(ngModel)]="draft.dataKey" />
+    @if (submitted && dataKeyError) { <small class="error">{{ dataKeyError }}</small> }
 
     <label for="type">סוג</label>
     <p-select inputId="type" [options]="typeOptions" [(ngModel)]="draft.type" appendTo="body" />
@@ -59,7 +63,7 @@
 
   <ng-template #footer>
     <p-button label="ביטול" [text]="true" severity="secondary" (onClick)="dialogVisible = false" />
-    <p-button label="שמירה" [disabled]="!isValid" (onClick)="save()" />
+    <p-button label="שמירה" (onClick)="save()" />
   </ng-template>
 </p-dialog>
 

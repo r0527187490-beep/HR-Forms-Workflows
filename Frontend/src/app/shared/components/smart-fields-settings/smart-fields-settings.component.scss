@@ -71,3 +71,5 @@ tr:hover .actions,
 tr:focus-within .actions {
     opacity: 1;
 }
+.form input.invalid { border-color: #ef4444; }
+.error { color: #ef4444; font-size: 12px; }
