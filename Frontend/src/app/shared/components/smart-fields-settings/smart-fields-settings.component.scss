@@ -8,7 +8,7 @@ $primary-hover: #1d4ed8;
 $editing-bg: #eff6ff;
 $danger: #ef4444;
 
-// צבעי המערכת (תכלת) עבור רכיבי PrimeNG
+
 @mixin brand-vars {
   --p-button-primary-background: #{$primary};
   --p-button-primary-border-color: #{$primary};
@@ -22,6 +22,8 @@ $danger: #ef4444;
   --p-inputtext-focus-border-color: #{$primary};
   --p-select-focus-border-color: #{$primary};
   --p-focus-ring-color: #{$primary};
+  --p-paginator-nav-button-selected-background: #{$editing-bg};
+  --p-paginator-nav-button-selected-color: #{$primary};
 }
 
 :host {
@@ -30,7 +32,7 @@ $danger: #ef4444;
   @include brand-vars;
 }
 
-// ---------- כותרת וכרטיס ----------
+
 .settings-container {
   .title-row {
     display: flex;
@@ -54,7 +56,7 @@ $danger: #ef4444;
   border-radius: 16px;
 }
 
-// ---------- הטבלה (PrimeNG) ----------
+
 :host ::ng-deep {
   .p-datatable {
     font-size: inherit;
@@ -97,17 +99,17 @@ $danger: #ef4444;
     }
   }
 
-  // זברה
+  
   .p-datatable .p-datatable-tbody > tr:nth-child(even) {
     background: $head-bg;
   }
 
-  // hover (אחרי הזברה כדי שינצח אותה)
+  
   .p-datatable .p-datatable-tbody > tr:hover {
     background: $editing-bg;
   }
 
-  // שורה בעריכה
+  
   .p-datatable .p-datatable-tbody > tr.editing,
   .p-datatable .p-datatable-tbody > tr.editing:hover {
     background: $editing-bg;
@@ -128,7 +130,7 @@ $danger: #ef4444;
     color: #94a3b8 !important;
   }
 
-  // עמודת הפעולות: מופיעה רק ב-hover / בעריכה
+
   td.actions {
     width: 1%;
     white-space: nowrap;
@@ -142,9 +144,43 @@ $danger: #ef4444;
   .p-datatable-tbody > tr.editing td.actions {
     opacity: 1;
   }
+
+  
+  .p-paginator {
+    padding: 12px 24px;
+    font-family: inherit;
+    background: transparent;
+    border: none;
+    border-top: 1px solid $border;
+  }
+
+  
+  .p-paginator .p-paginator-first-icon,
+  .p-paginator .p-paginator-prev-icon,
+  .p-paginator .p-paginator-next-icon,
+  .p-paginator .p-paginator-last-icon {
+    transform: scaleX(-1);
+  }
+
+  
+  .p-paginator .p-paginator-page.p-paginator-page-selected {
+    outline: none;
+    box-shadow: none;
+    border: 1px solid #bfdbfe;
+  }
+
+  
+  .p-paginator .p-paginator-page:focus-visible,
+  .p-paginator .p-paginator-first:focus-visible,
+  .p-paginator .p-paginator-prev:focus-visible,
+  .p-paginator .p-paginator-next:focus-visible,
+  .p-paginator .p-paginator-last:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
 }
 
-// ---------- שדות עריכה בשורה ----------
+
 .cell-input {
   width: 100%;
   max-width: 240px;
@@ -161,7 +197,7 @@ $danger: #ef4444;
   color: $danger;
 }
 
-// ---------- חלון הוספה (נפתח ב-body, לכן המשתנים כאן) ----------
+
 .form {
   @include brand-vars;
   display: flex;

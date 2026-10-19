@@ -5,7 +5,7 @@
   </div>
 
   <div class="table-card">
-    <p-table [value]="fields()" dataKey="idRec">
+    <p-table [value]="fields()" dataKey="idRec" [paginator]="true" [rows]="5">
       <ng-template #header>
         <tr>
           <th>שם שדה</th>
