@@ -66,6 +66,7 @@ namespace TavniyotBuilder.Api.Services
 
             var smartFields = await connection.QueryAsync<SmartField>(
                 sql: sp,
+                param: new { OnlyActive = true },
                 commandType: CommandType.StoredProcedure
             );
 
