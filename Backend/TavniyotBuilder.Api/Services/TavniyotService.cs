@@ -1,4 +1,4 @@
-using Dapper;
+ï»¿using Dapper;
 using System.Data;
 using System.Globalization;
 using System.Text.Json;
@@ -100,10 +100,10 @@ namespace TavniyotBuilder.Api.Services
         {
             return new List<FormControl>
             {
-                new FormControl { Type = ControlType.Text, Label = "è÷ñè ÷öø" },
-                new FormControl { Type = ControlType.Paragraph, Label = "ôñ÷ä" },
-                new FormControl { Type = ControlType.Date, Label = "úàøéê" },
-                new FormControl { Type = ControlType.File, Label = "äòìàú ÷åáõ" }
+                new FormControl { Type = ControlType.Text, Label = "×˜×§×¡×˜ ×§×¦×¨" },
+                new FormControl { Type = ControlType.Paragraph, Label = "×¤×¡×§×”" },
+                new FormControl { Type = ControlType.Date, Label = "×ª××¨×™×š" },
+                new FormControl { Type = ControlType.File, Label = "×”×¢×œ××ª ×§×•×‘×¥" }
             };
         }
 
@@ -224,6 +224,8 @@ namespace TavniyotBuilder.Api.Services
                 return errors;
             }
 
+            ValidateCanvasSize(form, errors);
+
             var smartFields = await GetSmartFieldsList();
             var ids = new HashSet<string>();
             var smartFieldKeys = new HashSet<string>();
@@ -257,6 +259,14 @@ namespace TavniyotBuilder.Api.Services
             }
 
             return errors;
+        }
+
+        private static void ValidateCanvasSize(FormStructure form, List<string> errors)
+        {
+            if (form.CanvasWidth <= 0 || form.CanvasHeight <= 0)
+            {
+                errors.Add("Canvas width and height must be greater than 0");
+            }
         }
 
         private static void ValidateLayout(FormControl control, List<string> errors)
