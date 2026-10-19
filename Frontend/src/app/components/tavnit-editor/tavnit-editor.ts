@@ -60,7 +60,12 @@ export class TavnitEditor {
   isSaving = false;
 
   // מזהה התבנית מהשרת. ריק עד השמירה הראשונה, ואז כל שמירה יוצרת גרסה חדשה של אותה תבנית.
+  // מזהה התבנית מהשרת. ריק עד השמירה הראשונה, ואז כל שמירה יוצרת גרסה חדשה של אותה תבנית.
   private idRecTavnit: number | null = null;
+
+  // הערה כללית על הטופס (נשמרת בתבנית).
+  teur = '';
+
   // מעבר בין לשוניות.
   selectTab(tab: EditorTab): void {
     this.activeTab = tab;
@@ -187,6 +192,7 @@ publishForm(): void {
   const details = {
     idRecTavnit: this.idRecTavnit,
     shemTofes: fullFormName,
+    teur: this.teur.trim() || null,
     form: {
       controls,
       canvasWidth: this.previewCanvasWidth,
