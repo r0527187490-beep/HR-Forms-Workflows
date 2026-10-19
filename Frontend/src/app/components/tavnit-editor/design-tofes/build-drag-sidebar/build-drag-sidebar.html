@@ -1,0 +1,64 @@
+
+<aside class="sidebar" dir="rtl">
+
+  <!-- כותרת הפקדים החכמים -->
+  <p class="section-title">פקדי HR חכמים</p>
+
+  <p *ngIf="loadingSmartFields" class="hint">
+    טוען שדות חכמים...
+  </p>
+
+  <p *ngIf="smartFieldsError" class="hint error">
+    טעינת השדות החכמים נכשלה.
+  </p>
+
+  <div
+    class="fields-list smart-fields"
+    cdkDropList
+    id="smartFieldsPalette"
+    [cdkDropListData]="smartFields"
+    [cdkDropListConnectedTo]="['formCanvas']"
+    [cdkDropListSortingDisabled]="true">
+
+    <div
+      class="palette-item smart-item"
+      *ngFor="let field of smartFields"
+      cdkDrag
+      [cdkDragData]="field">
+
+      <app-draggable-field [field]="field"></app-draggable-field>
+
+    </div>
+  </div>
+
+  <p
+    *ngIf="!loadingSmartFields &&
+           !smartFieldsError &&
+           smartFields.length === 0"
+    class="hint">
+    לא נמצאו שדות HR חכמים.
+  </p>
+
+  <!-- כותרת הפקדים הבסיסיים -->
+  <p class="section-title basic-title">פקדים בסיסיים</p>
+
+  <div
+    class="fields-list basic-fields"
+    cdkDropList
+    id="palette"
+    [cdkDropListData]="fields"
+    [cdkDropListConnectedTo]="['formCanvas']"
+    [cdkDropListSortingDisabled]="true">
+
+    <div
+      class="palette-item basic-item"
+      *ngFor="let field of fields"
+      cdkDrag
+      [cdkDragData]="field">
+
+      <app-draggable-field [field]="field"></app-draggable-field>
+
+    </div>
+  </div>
+
+</aside>

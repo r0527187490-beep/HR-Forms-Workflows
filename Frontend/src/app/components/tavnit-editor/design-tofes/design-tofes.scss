@@ -1,0 +1,27 @@
+/* הרכיב ממלא את רוחב האזור שמעליו. */
+:host {
+  display: block;
+  width: 100%;
+  min-width: 0;
+}
+
+/* סרגל של 160px בצד ימין, ושאר המסך למשטח העבודה. */
+.designer-layout {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 0;
+
+  width: 100%;
+  min-height: calc(100vh - 68px);
+
+  padding: 0;
+  background: #f0f4f9;
+  box-sizing: border-box;
+}
+
+/* במסך צר הסרגל עובר מעל משטח העבודה. */
+@media (max-width: 750px) {
+  .designer-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}

@@ -4,17 +4,45 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CodTeur } from '../models/cod-teur';
 import { Tavnit } from '../models/tavnit';
+import { FormControl } from '../models/form-control';
+
+// המבנה שנשלח לשרת בעת שמירת תבנית.
+export interface FormDetails {
+  shemTofes: string;
+  form: {
+    controls: FormControl[];
+  };
+}
 
 @Injectable({ providedIn: 'root' })
 export class TavniyotService {
   private http = inject(HttpClient);
+
   private baseUrl = `${environment.url}Tavniyot`;
 
   getAllTavniyotTest(): Observable<Tavnit[]> {
-    return this.http.get<Tavnit[]>(`${this.baseUrl}/GetAllTavniyotTEST`);
+    return this.http.get<Tavnit[]>(
+      `${this.baseUrl}/GetAllTavniyotTEST`
+    );
   }
 
   getCodTeurTavniyotTest(): Observable<CodTeur[]> {
-    return this.http.get<CodTeur[]>(`${this.baseUrl}/GetCodTeurTavniyotTEST`);
+    return this.http.get<CodTeur[]>(
+      `${this.baseUrl}/GetCodTeurTavniyotTEST`
+    );
+  }
+
+  GetSmartFieldsList(): Observable<FormControl[]> {
+    return this.http.get<FormControl[]>(
+      `${this.baseUrl}/GetSmartFieldsList`
+    );
+  }
+
+  // שמירת הטופס בשרת.
+  saveForm(details: FormDetails): Observable<unknown> {
+    return this.http.post<unknown>(
+      `${this.baseUrl}/SaveForm`,
+      details
+    );
   }
 }

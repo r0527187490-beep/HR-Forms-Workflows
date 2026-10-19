@@ -1,0 +1,85 @@
+
+<div class="rendered-control" dir="rtl">
+  <!-- מציג את הכותרת של הפקד. -->
+  <label class="control-label">
+    {{ field.label }}
+  </label>
+
+  <ng-container [ngSwitch]="field.type">
+
+    <!-- פקדים רגילים. -->
+    <input
+      *ngSwitchCase="'text'"
+      type="text"
+      class="form-input"
+      placeholder="הקלידי כאן..." />
+
+    <textarea
+      *ngSwitchCase="'textarea'"
+      class="form-input textarea-input"
+      placeholder="הקלידי כאן...">
+    </textarea>
+
+    <input
+      *ngSwitchCase="'date'"
+      type="date"
+      class="form-input" />
+
+    <input
+      *ngSwitchCase="'file'"
+      type="file"
+      class="form-input file-input" />
+
+    <!-- שדה שם עובד: תצוגה בלבד. -->
+    <input
+      *ngSwitchCase="'HR_Name'"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <!-- שדה תעודת זהות: תצוגה בלבד. -->
+    <input
+      *ngSwitchCase="'HR_Id'"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <!-- שדה מחלקה ארגונית: תצוגה בלבד. -->
+    <input
+      *ngSwitchCase="'HR_Department'"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <!-- תמיכה גם בשמות הישנים שכבר קיימים אצלך. -->
+    <input
+      *ngSwitchCase="'employeeName'"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <input
+      *ngSwitchCase="'employeeId'"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <input
+      *ngSwitchCase="'department'"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <!-- הודעה במקרה של סוג לא מוכר. -->
+    <p *ngSwitchDefault class="unknown-control">
+      סוג פקד לא מוכר
+    </p>
+
+  </ng-container>
+</div>

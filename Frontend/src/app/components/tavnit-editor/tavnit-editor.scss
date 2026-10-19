@@ -1,0 +1,520 @@
+
+/* =========================================
+   הגדרות כלליות
+========================================= */
+
+:host {
+  display: block;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: #17243a;
+  box-sizing: border-box;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* המעטפת הראשית */
+.tavnit-editor {
+  direction: rtl;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  gap: 0;
+  background: #ffffff;
+}
+
+/* =========================================
+   סרגל עליון
+========================================= */
+
+.top-header {
+  direction: ltr;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-shrink: 0;
+  width: 100%;
+  height: 57px;
+  min-height: 57px;
+  margin: 0;
+  padding: 0 9px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5eaf1;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-shrink: 0;
+}
+
+/* כפתורים עליונים */
+.header-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 35px;
+  margin: 0;
+  padding: 0 12px;
+  border: 1px solid transparent;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 400;
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    color 0.2s ease;
+}
+
+.header-button svg {
+  display: block;
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex-shrink: 0;
+}
+
+/* פרסום */
+.publish-button {
+  color: #ffffff;
+  background: #2864f0;
+  border-color: #2864f0;
+}
+
+.publish-button:hover {
+  background: #1d4ed8;
+  border-color: #1d4ed8;
+}
+
+/* תצוגה מקדימה */
+.preview-button {
+  color: #64748b;
+  background: #f3f4f6;
+  border-color: #f3f4f6;
+}
+
+.preview-button:hover {
+  background: #e9edf3;
+  border-color: #e2e8f0;
+}
+
+/* כותרת */
+.header-title {
+  direction: rtl;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+  margin: 0;
+  flex-shrink: 0;
+}
+
+.header-title h1 {
+  margin: 0;
+  padding: 0;
+  color: #17243a;
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* חזרה */
+.back-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 30px;
+  margin: 0;
+  padding: 0;
+  color: #8b9bb5;
+  text-decoration: none;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.back-link svg {
+  display: block;
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.back-link:hover {
+  color: #2563eb;
+}
+
+/* אייקון מסמך */
+.title-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 34px;
+  height: 38px;
+  margin: 0;
+  padding: 0;
+  border-radius: 7px;
+  color: #3478f6;
+  background: #e5efff;
+  flex-shrink: 0;
+}
+
+.title-icon svg {
+  display: block;
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+/* =========================================
+   סרגל ניווט
+========================================= */
+
+.editor-navigation {
+  display: flex;
+  align-items: stretch;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 100%;
+  height: 42px;
+  min-height: 42px;
+  margin: 0;
+  padding: 0 18px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5eaf1;
+}
+
+.navigation-links {
+  display: flex;
+  align-items: stretch;
+  gap: 23px;
+  margin: 0;
+  padding: 0;
+}
+
+.navigation-link {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  padding: 0 2px;
+  color: #7185a5;
+  font-size: 12px;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.navigation-link.active {
+  color: #2864f0;
+  font-weight: 600;
+}
+
+.navigation-link.active::after {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: #2864f0;
+  content: "";
+}
+
+.navigation-link:hover {
+  color: #2563eb;
+}
+
+/* =========================================
+   לשוניות בנייה בגרירה ו-HTML
+========================================= */
+
+/* שורת הלשוניות – ללא גובה ורווח מיותרים */
+.builder-tabs-row {
+  direction: rtl;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  flex-shrink: 0;
+  width: 100%;
+  height: 32px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 10px;
+  background: #ffffff;
+  border: none;
+  box-shadow: none;
+}
+
+/* קבוצת הלשוניות */
+.builder-tabs {
+  direction: rtl;
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+/* לשונית */
+.builder-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 0;
+  height: 25px;
+  margin: 0;
+  padding: 0 9px;
+  border: none;
+  border-radius: 4px;
+  color: #64748b;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: none;
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease;
+}
+
+/* לשונית נבחרת */
+.builder-tab.selected {
+  color: #2563eb;
+  background: #eff6ff;
+  font-weight: 600;
+  border: none;
+  box-shadow: none;
+}
+
+/* מעבר עכבר */
+.builder-tab:not(.selected):hover {
+  color: #1e40af;
+  background: #f1f5f9;
+}
+
+/* ביטול קווים דקורטיביים בלשוניות */
+.builder-tabs-row::before,
+.builder-tabs-row::after,
+.builder-tabs::before,
+.builder-tabs::after,
+.builder-tab::before,
+.builder-tab::after {
+  content: none;
+  display: none;
+}
+
+/* =========================================
+   אזור התוכן של העורך
+========================================= */
+
+/* המעטפת שמגיעה מיד אחרי הלשוניות */
+.builder-tabs-row + * {
+  margin-top: 0;
+}
+
+/* =========================================
+   פוקוס ונגישות
+========================================= */
+
+.header-button:focus-visible,
+.builder-tab:focus-visible,
+.navigation-link:focus-visible,
+.back-link:focus-visible {
+  outline: 2px solid #60a5fa;
+  outline-offset: 2px;
+}
+
+/* =========================================
+   התאמה למסכים קטנים
+========================================= */
+
+@media (max-width: 600px) {
+  .top-header {
+    gap: 6px;
+    padding: 0 6px;
+  }
+
+  .header-actions {
+    gap: 4px;
+  }
+
+  .header-button {
+    gap: 4px;
+    height: 31px;
+    padding: 0 6px;
+    font-size: 10px;
+  }
+
+  .header-title {
+    gap: 6px;
+  }
+
+  .header-title h1 {
+    font-size: 12px;
+  }
+
+  .title-icon {
+    width: 28px;
+    height: 30px;
+  }
+
+  .editor-navigation {
+    height: 38px;
+    min-height: 38px;
+    padding: 0 10px;
+    overflow-x: auto;
+  }
+
+  .navigation-links {
+    gap: 15px;
+  }
+
+  .builder-tabs-row {
+    height: 30px;
+    min-height: 30px;
+    padding: 0 6px;
+  }
+
+  .builder-tabs {
+    gap: 2px;
+  }
+
+  .builder-tab {
+    height: 24px;
+    padding: 0 7px;
+    font-size: 10px;
+  }
+}
+
+/* שורת הלשוניות */
+.builder-tabs-row {
+  direction: rtl;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-start;
+  width: 100%;
+  height: 32px;
+  min-height: 32px;
+  margin: 0;
+  padding: 0 10px;
+  background: #ffffff;
+  border: none;
+  box-shadow: none;
+  box-sizing: border-box;
+}
+
+/* קבוצת הלשוניות */
+.builder-tabs {
+  direction: rtl;
+  display: flex;
+  align-items: stretch;
+  gap: 2px;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+/* לשונית */
+.builder-tab {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 0;
+  height: 28px;
+  margin: 0;
+  padding: 0 10px;
+  border: none;
+  border-radius: 5px 5px 0 0;
+  background: transparent;
+  color: #64748b;
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 400;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+  box-shadow: none;
+  box-sizing: border-box;
+  transition: background-color 0.2s, color 0.2s;
+}
+
+/* לשונית פעילה */
+.builder-tab.selected {
+  position: relative;
+  z-index: 1;
+  color: #2563eb;
+  background: #ffffff;
+  font-weight: 600;
+  border: 1px solid #e5eaf1;
+  border-bottom-color: #ffffff;
+  border-radius: 5px 5px 0 0;
+  box-shadow: none;
+}
+
+/* מעבר עכבר */
+.builder-tab:not(.selected):hover {
+  color: #2563eb;
+  background: #f1f5f9;
+}
+
+/* ביטול אלמנטים דקורטיביים */
+.builder-tabs-row::before,
+.builder-tabs-row::after,
+.builder-tabs::before,
+.builder-tabs::after {
+  content: none;
+  display: none;
+}
+
+/* התאמה למסכים קטנים */
+@media (max-width: 600px) {
+  .builder-tabs-row {
+    height: 30px;
+    min-height: 30px;
+    padding: 0 6px;
+  }
+
+  .builder-tab {
+    height: 26px;
+    padding: 0 8px;
+    font-size: 10px;
+  }
+}

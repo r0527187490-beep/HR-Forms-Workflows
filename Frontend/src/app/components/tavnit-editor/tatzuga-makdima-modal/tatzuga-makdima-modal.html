@@ -1,0 +1,63 @@
+
+<!-- שכבת הרקע של חלון התצוגה -->
+<div
+  class="preview-overlay"
+  *ngIf="isOpen"
+  dir="rtl"
+  (click)="close()">
+
+  <!-- חלון התצוגה -->
+  <section
+    class="preview-modal"
+    role="dialog"
+    aria-modal="true"
+    aria-label="תצוגה מקדימה של הטופס"
+    (click)="$event.stopPropagation()">
+
+    <!-- כותרת החלון -->
+    <header class="preview-header">
+      <h2>תצוגה מקדימה — טופס בקשת הלוואה</h2>
+
+      <button
+        type="button"
+        aria-label="סגירה"
+        (click)="close()">
+        ✕
+      </button>
+    </header>
+
+    <!-- אזור גלילה שמאפשר לראות גם קנבס גדול -->
+    <div class="preview-scroll">
+
+      <!-- הקנבס שומר על המידות המקוריות -->
+      <div
+        class="preview-canvas"
+        [style.width.px]="canvasWidth"
+        [style.height.px]="canvasHeight">
+
+        <!-- הצגת כל הפקדים במיקום ובגודל שלהם -->
+        <div
+          *ngFor="let field of fields"
+          class="preview-field"
+          [style.left.px]="field.x"
+          [style.top.px]="field.y"
+          [style.width.px]="field.width"
+          [style.height.px]="field.height">
+
+          <app-rendered-control
+            [field]="field">
+          </app-rendered-control>
+
+        </div>
+
+      </div>
+
+      <!-- הודעה כאשר אין פקדים -->
+      <p class="empty-preview" *ngIf="fields.length === 0">
+        עדיין לא נוספו פקדים לטופס.
+      </p>
+
+    </div>
+
+  </section>
+</div>

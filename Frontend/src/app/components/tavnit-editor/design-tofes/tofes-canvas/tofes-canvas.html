@@ -1,0 +1,70 @@
+
+<section class="workspace" dir="rtl">
+  <div class="canvas-wrapper">
+    <div
+      #canvasElement
+      class="canvas"
+      cdkDropList
+      id="formCanvas"
+      [cdkDropListData]="fields"
+      [cdkDropListConnectedTo]="['palette']"
+      [cdkDropListSortingDisabled]="true"
+      [style.width.px]="canvasWidth"
+      [style.height.px]="canvasHeight"
+      (cdkDropListDropped)="drop($event)"
+      (pointerdown)="clearSelection()"
+    >
+      <div
+        *ngFor="let field of fields"
+        class="canvas-field"
+        [class.selected]="selectedFieldId === field.id"
+        [style.left.px]="field.x"
+        [style.top.px]="field.y"
+        [style.width.px]="field.width"
+        [style.height.px]="field.height"
+        (pointerdown)="selectField($event, field)"
+      >
+        <div
+          class="field-toolbar"
+          (pointerdown)="startMove($event, field)"
+        >
+          <button
+            *ngIf="selectedFieldId === field.id"
+            type="button"
+            class="delete-button"
+            title="מחיקת הפקד"
+            aria-label="מחיקת הפקד"
+            (pointerdown)="$event.stopPropagation()"
+            (click)="removeField(field.id)"
+          >
+            ✕
+          </button>
+        </div>
+
+        <div class="field-content">
+          <app-rendered-control
+            [field]="field"
+          ></app-rendered-control>
+        </div>
+
+        <div
+          *ngIf="selectedFieldId === field.id"
+          class="resize-handle"
+          title="שינוי גודל הפקד"
+          (pointerdown)="startResize($event, field)"
+        ></div>
+      </div>
+
+      <div class="empty-message" *ngIf="fields.length === 0">
+        גררי לכאן פקד מהסרגל כדי להתחיל לבנות את הטופס
+      </div>
+
+      <div
+        class="canvas-resize-handle"
+        title="שינוי גודל משטח הטופס"
+        aria-label="שינוי גודל משטח הטופס"
+        (pointerdown)="startCanvasResize($event)"
+      ></div>
+    </div>
+  </div>
+</section>

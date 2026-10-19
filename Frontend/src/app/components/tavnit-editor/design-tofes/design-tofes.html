@@ -1,0 +1,13 @@
+<!-- אזור עיצוב הטופס בכיווניות מימין לשמאל -->
+<div class="designer-layout" dir="rtl">
+
+  <!-- סרגל הפקדים -->
+  <app-build-drag-sidebar></app-build-drag-sidebar>
+
+  <!-- משטח הטופס -->
+  <app-tofes-canvas
+    (fieldsChange)="onFieldsChange($event)"
+    (canvasSizeChange)="updateCanvasSize($event)">
+  </app-tofes-canvas>
+
+</div>
