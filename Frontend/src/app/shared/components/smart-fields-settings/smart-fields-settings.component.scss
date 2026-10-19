@@ -5,20 +5,23 @@ $row-border: #f1f5f9;
 $head-bg: #f8fafc;
 $primary: #2563eb;
 $primary-hover: #1d4ed8;
+$editing-bg: #eff6ff;
+$danger: #ef4444;
 
+// צבעי המערכת (תכלת) עבור רכיבי PrimeNG
 @mixin brand-vars {
   --p-button-primary-background: #{$primary};
   --p-button-primary-border-color: #{$primary};
   --p-button-primary-hover-background: #{$primary-hover};
   --p-button-primary-hover-border-color: #{$primary-hover};
-  --p-button-primary-active-background: #{$primary-hover};
-  --p-button-primary-active-border-color: #{$primary-hover};
+  --p-button-primary-focus-ring-color: #{$primary};
   --p-button-text-primary-color: #{$primary};
-  --p-button-text-primary-hover-background: rgba(37, 99, 235, 0.1);
+  --p-button-text-primary-hover-background: rgba(37, 99, 235, 0.08);
   --p-toggleswitch-checked-background: #{$primary};
   --p-toggleswitch-checked-hover-background: #{$primary-hover};
   --p-inputtext-focus-border-color: #{$primary};
   --p-select-focus-border-color: #{$primary};
+  --p-focus-ring-color: #{$primary};
 }
 
 :host {
@@ -27,16 +30,21 @@ $primary-hover: #1d4ed8;
   @include brand-vars;
 }
 
-// הדיאלוג נפתח מחוץ ל-host, לכן הצבעים מוגדרים גם כאן
-.form, .dialog-footer { @include brand-vars; }
+// ---------- כותרת וכרטיס ----------
+.settings-container {
+  .title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
 
-.title-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 20px;
-
-  h3 { margin: 0; font-size: 15px; font-weight: 700; color: $text-dark; }
+    h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: $text-dark;
+    }
+  }
 }
 
 .table-card {
@@ -46,13 +54,22 @@ $primary-hover: #1d4ed8;
   border-radius: 16px;
 }
 
+// ---------- הטבלה (PrimeNG) ----------
 :host ::ng-deep {
-  .p-datatable { background: transparent; }
-  .p-datatable-table { width: 100%; border-collapse: collapse; }
+  .p-datatable {
+    font-size: inherit;
+    background: transparent;
+  }
+
+  .p-datatable-table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+  }
 
   .p-datatable .p-datatable-thead > tr > th {
-    padding: 10px 24px;
-    font-size: 13px;
+    padding: 12px 24px;
+    font-size: 15px;
     font-weight: 600;
     color: $text-muted;
     text-align: start;
@@ -65,11 +82,9 @@ $primary-hover: #1d4ed8;
     background: transparent;
     transition: background 0.15s;
 
-    &:hover { background: $head-bg; }
-
     > td {
-      padding: 14px 24px;
-      font-size: 14px;
+      padding: 16px 24px;
+      font-size: 16px;
       color: $text-dark;
       text-align: start;
       background: transparent;
@@ -77,11 +92,34 @@ $primary-hover: #1d4ed8;
       border-bottom: 1px solid $row-border;
     }
 
-    &:last-child > td { border-bottom: none; }
+    &:last-child > td {
+      border-bottom: none;
+    }
   }
 
-  .col-name { font-weight: 700; }
-  .col-muted { color: $text-muted !important; }
+  // זברה
+  .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background: $head-bg;
+  }
+
+  // hover (אחרי הזברה כדי שינצח אותה)
+  .p-datatable .p-datatable-tbody > tr:hover {
+    background: $editing-bg;
+  }
+
+  // שורה בעריכה
+  .p-datatable .p-datatable-tbody > tr.editing,
+  .p-datatable .p-datatable-tbody > tr.editing:hover {
+    background: $editing-bg;
+  }
+
+  .col-name {
+    font-weight: 700;
+  }
+
+  .col-muted {
+    color: $text-muted !important;
+  }
 
   .empty-state {
     padding: 26px 24px !important;
@@ -89,36 +127,68 @@ $primary-hover: #1d4ed8;
     font-style: italic;
     color: #94a3b8 !important;
   }
+
+  // עמודת הפעולות: מופיעה רק ב-hover / בעריכה
+  td.actions {
+    width: 1%;
+    white-space: nowrap;
+    text-align: left !important;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .p-datatable-tbody > tr:hover td.actions,
+  .p-datatable-tbody > tr:focus-within td.actions,
+  .p-datatable-tbody > tr.editing td.actions {
+    opacity: 1;
+  }
 }
 
-td.actions {
-  text-align: left !important;
-  white-space: nowrap;
-  width: 1%;
-  opacity: 0;
-  transition: opacity 0.15s;
+// ---------- שדות עריכה בשורה ----------
+.cell-input {
+  width: 100%;
+  max-width: 240px;
 }
 
-tr:hover .actions,
-tr:focus-within .actions,
-.editing .actions { opacity: 1; }
+.invalid {
+  border-color: $danger !important;
+}
 
+.error {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: $danger;
+}
+
+// ---------- חלון הוספה (נפתח ב-body, לכן המשתנים כאן) ----------
 .form {
-  direction: rtl;
+  @include brand-vars;
   display: flex;
   flex-direction: column;
   gap: 8px;
+  direction: rtl;
 
-  label { font-size: 13px; color: #374151; }
+  label {
+    font-size: 14px;
+    color: $text-dark;
+  }
+
+  input,
+  p-select {
+    width: 100%;
+  }
 }
 
-.switch-row { display: flex; align-items: center; gap: 8px; margin-top: 8px; }
-
-.cell-input { width: 100%; }
-.form input.invalid, .cell-input.invalid { border-color: #ef4444; }
-.error { color: #ef4444; font-size: 12px; }
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
 
 .dialog-footer {
+  @include brand-vars;
   display: flex;
   justify-content: flex-start;
   direction: ltr;
