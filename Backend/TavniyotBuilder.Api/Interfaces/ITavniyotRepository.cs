@@ -8,6 +8,10 @@ namespace TavniyotBuilder.Api.Interfaces
 
         // בודק ומנקה HTML לפני שמירה. זורק ArgumentException אם הקלט לא תקין.
         string Clean(string html);
+        Task<List<SmartField>> GetSmartFieldsAsync(bool onlyActive);
+        Task<SmartField> AddSmartFieldAsync(SmartField field);
+        Task<SmartField> UpdateSmartFieldAsync(int id, SmartField field);
+        Task DeleteSmartFieldAsync(int id);
 
     }
 }
