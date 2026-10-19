@@ -229,7 +229,6 @@ namespace TavniyotBuilder.Api.Services
 
             var smartFields = await GetSmartFieldsList();
             var ids = new HashSet<string>();
-            var smartFieldKeys = new HashSet<string>();
 
             foreach (var control in form.Controls)
             {
@@ -251,7 +250,7 @@ namespace TavniyotBuilder.Api.Services
 
                 if (control.SmartFieldKey != null)
                 {
-                    ValidateSmartFieldControl(control, smartFields, smartFieldKeys, errors);
+                    ValidateSmartFieldControl(control, smartFields, errors);
                 }
                 else
                 {
@@ -289,7 +288,7 @@ namespace TavniyotBuilder.Api.Services
             }
         }
 
-        private static void ValidateSmartFieldControl(FormControl control, List<FormControl> smartFields, HashSet<string> smartFieldKeys, List<string> errors)
+        private static void ValidateSmartFieldControl(FormControl control, List<FormControl> smartFields, List<string> errors)
         {
             FormControl? catalogControl = smartFields.FirstOrDefault(smartField => smartField.SmartFieldKey == control.SmartFieldKey);
 
@@ -299,13 +298,7 @@ namespace TavniyotBuilder.Api.Services
                 return;
             }
 
-            if (!smartFieldKeys.Add(control.SmartFieldKey!))
-            {
-                errors.Add($"Smart field {control.SmartFieldKey} appears more than once");
-            }
-
-            bool matchesCatalog = control.Id == catalogControl.Id
-                && control.Type == catalogControl.Type
+            bool matchesCatalog = control.Type == catalogControl.Type
                 && control.Label == catalogControl.Label
                 && control.Required == catalogControl.Required
                 && control.ReadOnly;
