@@ -54,7 +54,10 @@ export class BuildDragSidebar implements OnInit {
       next: (response: FormControl[]) => {
         this.smartFields = response.map(field => ({
           id: field.id || undefined,
-          type: field.type,
+          // השרת שולח את הסוג כשם (למשל "HR_Name"), וה-enum בקליינט מספרי, ולכן ממירים
+          type: typeof field.type === 'string'
+            ? ControlType[field.type as keyof typeof ControlType]
+            : field.type,
           label: field.label,
           required: field.required,
           readOnly: true,
