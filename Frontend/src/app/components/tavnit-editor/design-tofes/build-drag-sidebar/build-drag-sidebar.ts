@@ -1,26 +1,24 @@
+
 import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { CdkDrag, CdkDropList } from '@angular/cdk/drag-drop';
+
 import { TavniyotService } from '../../../../services/tavniyot.service';
 import { ControlType } from '../../../../models/enums/control-type.enum';
-import { FormControl as SmartFormControl } from '../../../../models/form-control';
 import { DraggableField } from './draggable-field/draggable-field';
+import { FormControl } from '../../../../models/form-control.model';
 
-export type FieldType =
-  | 'text'
-  | 'textarea'
-  | 'date'
-  | 'file'
-  | ControlType.HR_Name
-  | ControlType.HR_Id
-  | ControlType.HR_Department;
+export type FieldType = ControlType;
 
 export interface FieldOption {
+  id?: string;
   type: FieldType;
   label: string;
   required?: boolean;
   readOnly?: boolean;
   smartFieldKey?: string | null;
+  helpText?: string | null;
+  defaultValue?: string | null;
 }
 
 @Component({
@@ -34,10 +32,10 @@ export class BuildDragSidebar implements OnInit {
   private readonly tavniyotService = inject(TavniyotService);
 
   fields: FieldOption[] = [
-    { type: 'text', label: 'טקסט קצר' },
-    { type: 'textarea', label: 'פסקה' },
-    { type: 'date', label: 'תאריך' },
-    { type: 'file', label: 'העלאת קובץ' }
+    { type: ControlType.Text, label: 'טקסט קצר', required: false, readOnly: false },
+    { type: ControlType.Paragraph, label: 'פסקה', required: false, readOnly: false },
+    { type: ControlType.Date, label: 'תאריך', required: false, readOnly: false },
+    { type: ControlType.File, label: 'העלאת קובץ', required: false, readOnly: false }
   ];
 
   smartFields: FieldOption[] = [];
@@ -53,13 +51,16 @@ export class BuildDragSidebar implements OnInit {
     this.smartFieldsError = false;
 
     this.tavniyotService.GetSmartFieldsList().subscribe({
-      next: (response: SmartFormControl[]) => {
+      next: (response: FormControl[]) => {
         this.smartFields = response.map(field => ({
-          type: field.type as FieldType,
+          id: field.id || undefined,
+          type: field.type,
           label: field.label,
           required: field.required,
           readOnly: true,
-          smartFieldKey: field.smartFieldKey ?? null
+          smartFieldKey: field.smartFieldKey ?? null,
+          helpText: field.helpText ?? null,
+          defaultValue: field.defaultValue ?? null
         }));
 
         this.loadingSmartFields = false;

@@ -4,15 +4,11 @@ import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 import { CodTeur } from '../models/cod-teur';
 import { Tavnit } from '../models/tavnit';
-import { FormControl } from '../models/form-control';
+import { FormControl } from '../models/form-control.model';
+import { FormDetails } from '../models/form-details.model';
 
-// המבנה שנשלח לשרת בעת שמירת תבנית.
-export interface FormDetails {
-  shemTofes: string;
-  form: {
-    controls: FormControl[];
-  };
-}
+
+
 
 @Injectable({ providedIn: 'root' })
 export class TavniyotService {

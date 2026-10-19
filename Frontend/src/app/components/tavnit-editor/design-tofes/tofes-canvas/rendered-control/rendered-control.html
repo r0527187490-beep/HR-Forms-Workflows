@@ -1,36 +1,57 @@
-
 <div class="rendered-control" dir="rtl">
-  <!-- מציג את הכותרת של הפקד. -->
+  <!-- כותרת הפקד -->
   <label class="control-label">
     {{ field.label }}
   </label>
 
   <ng-container [ngSwitch]="field.type">
 
-    <!-- פקדים רגילים. -->
+    <!-- פקדים בסיסיים לפי ה-enum -->
     <input
-      *ngSwitchCase="'text'"
+      *ngSwitchCase="ControlType.Text"
       type="text"
       class="form-input"
       placeholder="הקלידי כאן..." />
 
     <textarea
-      *ngSwitchCase="'textarea'"
+      *ngSwitchCase="ControlType.Paragraph"
       class="form-input textarea-input"
       placeholder="הקלידי כאן...">
     </textarea>
 
     <input
-      *ngSwitchCase="'date'"
+      *ngSwitchCase="ControlType.Date"
       type="date"
       class="form-input" />
 
     <input
-      *ngSwitchCase="'file'"
+      *ngSwitchCase="ControlType.File"
       type="file"
       class="form-input file-input" />
 
-    <!-- שדה שם עובד: תצוגה בלבד. -->
+    <!-- שדות HR לפי ה-enum -->
+    <input
+      *ngSwitchCase="ControlType.HR_Name"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <input
+      *ngSwitchCase="ControlType.HR_Id"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <input
+      *ngSwitchCase="ControlType.HR_Department"
+      type="text"
+      class="form-input smart-input"
+      readonly
+      [placeholder]="smartPlaceholder" />
+
+    <!-- תמיכה בשדות HR ישנים אם הם מגיעים כמחרוזות -->
     <input
       *ngSwitchCase="'HR_Name'"
       type="text"
@@ -38,7 +59,6 @@
       readonly
       [placeholder]="smartPlaceholder" />
 
-    <!-- שדה תעודת זהות: תצוגה בלבד. -->
     <input
       *ngSwitchCase="'HR_Id'"
       type="text"
@@ -46,7 +66,6 @@
       readonly
       [placeholder]="smartPlaceholder" />
 
-    <!-- שדה מחלקה ארגונית: תצוגה בלבד. -->
     <input
       *ngSwitchCase="'HR_Department'"
       type="text"
@@ -54,7 +73,6 @@
       readonly
       [placeholder]="smartPlaceholder" />
 
-    <!-- תמיכה גם בשמות הישנים שכבר קיימים אצלך. -->
     <input
       *ngSwitchCase="'employeeName'"
       type="text"
@@ -76,9 +94,9 @@
       readonly
       [placeholder]="smartPlaceholder" />
 
-    <!-- הודעה במקרה של סוג לא מוכר. -->
+    <!-- סוג פקד לא מזוהה -->
     <p *ngSwitchDefault class="unknown-control">
-      סוג פקד לא מוכר
+      סוג פקד לא מוכר: {{ field.type }}
     </p>
 
   </ng-container>
