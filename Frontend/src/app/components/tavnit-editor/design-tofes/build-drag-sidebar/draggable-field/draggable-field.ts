@@ -1,7 +1,9 @@
 
 import { Component, Input } from '@angular/core';
 import { NgIf } from '@angular/common';
+
 import { FieldOption } from '../build-drag-sidebar';
+import { ControlType } from '../../../../../models/enums/control-type.enum';
 
 @Component({
   selector: 'app-draggable-field',
@@ -13,23 +15,29 @@ import { FieldOption } from '../build-drag-sidebar';
 export class DraggableField {
   @Input({ required: true }) field!: FieldOption;
 
-  private get type(): string {
-    return String(this.field.type);
-  }
-
   isHRName(): boolean {
-    return ['HR_Name', 'employeeName'].includes(this.type);
+    return this.field.type === ControlType.HR_Name;
   }
 
   isHRId(): boolean {
-    return ['HR_Id', 'employeeId'].includes(this.type);
+    return this.field.type === ControlType.HR_Id;
   }
 
   isHRDepartment(): boolean {
-    return ['HR_Department', 'department'].includes(this.type);
+    return this.field.type === ControlType.HR_Department;
   }
 
-  isBasic(type: string): boolean {
-    return this.type === type;
-  }
+isBasic(type: string): boolean {
+  const aliases: Record<string, ControlType> = {
+    text: ControlType.Text,
+    textarea: ControlType.Paragraph,
+    date: ControlType.Date,
+    file: ControlType.File
+  };
+
+  const expectedType = aliases[type];
+
+  return expectedType !== undefined
+    && this.field.type === expectedType;
+}
 }

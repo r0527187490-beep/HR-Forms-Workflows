@@ -1,7 +1,17 @@
 
 import { Component, EventEmitter, Output } from '@angular/core';
+
 import { BuildDragSidebar } from './build-drag-sidebar/build-drag-sidebar';
 import { TofesCanvas } from './tofes-canvas/tofes-canvas';
+import { FormControl } from '../../../models/form-control.model';
+
+export type CanvasField = FormControl & {
+  id: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+};
 
 @Component({
   selector: 'app-design-tofes',
@@ -11,28 +21,21 @@ import { TofesCanvas } from './tofes-canvas/tofes-canvas';
   styleUrl: './design-tofes.scss'
 })
 export class DesignTofes {
+  fields: CanvasField[] = [];
 
-  // הפקדים שנמצאים על הקנבס
-  fields: any[] = [];
-
-  // מידות הקנבס
   canvasWidth = 600;
   canvasHeight = 300;
 
-  // העברת הפקדים לקומפוננטה שמכילה את המעצב
-  @Output() fieldsChange = new EventEmitter<any[]>();
+  @Output() fieldsChange = new EventEmitter<CanvasField[]>();
 
-  // העברת מידות הקנבס לקומפוננטה שמכילה את המעצב
   @Output() canvasSizeChange =
     new EventEmitter<{ width: number; height: number }>();
 
-  // עדכון הפקדים בכל גרירה, שינוי גודל או הוספה
-  onFieldsChange(fields: any[]): void {
+  onFieldsChange(fields: CanvasField[]): void {
     this.fields = fields.map(field => ({ ...field }));
     this.fieldsChange.emit(this.fields);
   }
 
-  // עדכון מידות הקנבס
   updateCanvasSize(size: { width: number; height: number }): void {
     this.canvasWidth = size.width;
     this.canvasHeight = size.height;
