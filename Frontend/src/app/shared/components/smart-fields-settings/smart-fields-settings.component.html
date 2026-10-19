@@ -1,43 +1,72 @@
-<div class="settings-card">
-  <div class="toolbar">
-    <h2 class="title">פקדי HR מובנים</h2>
+<div class="settings-container">
+  <div class="title-row">
+    <h3>פקדי HR מובנים</h3>
     <p-button label="הוספת שדה" icon="pi pi-plus" (onClick)="openAdd()" />
   </div>
 
-  <p-table [value]="fields()" dataKey="idRec">
-    <ng-template #header>
-      <tr>
-        <th>שם שדה</th>
-        <th>מפתח נתון (DataKey)</th>
-        <th>סוג</th>
-        <th>פעיל</th>
-        <th></th>
-      </tr>
-    </ng-template>
+  <div class="table-card">
+    <p-table [value]="fields()" dataKey="idRec">
+      <ng-template #header>
+        <tr>
+          <th>שם שדה</th>
+          <th>מפתח נתון (DataKey)</th>
+          <th>סוג</th>
+          <th>פעיל</th>
+          <th></th>
+        </tr>
+      </ng-template>
 
-    <ng-template #body let-field>
-      <tr>
-        <td>{{ field.shemSadeh }}</td>
-        <td>{{ field.dataKey }}</td>
-        <td>{{ field.type }}</td>
-        <td>{{ field.isPail ? 'כן' : 'לא' }}</td>
-        <td class="actions">
-          <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" (onClick)="openEdit(field)" />
-          <p-button icon="pi pi-trash" [text]="true" [rounded]="true" severity="danger" (onClick)="confirmDelete(field)" />
-        </td>
-      </tr>
-    </ng-template>
+      <ng-template #body let-field>
+        @if (editingId() === field.idRec) {
+          <tr class="editing">
+            <td>
+              <input pInputText class="cell-input" maxlength="100"
+                     [class.invalid]="rowSubmitted && rowShemError"
+                     [(ngModel)]="rowDraft.shemSadeh" />
+              @if (rowSubmitted && rowShemError) { <small class="error">{{ rowShemError }}</small> }
+            </td>
+            <td>
+              <input pInputText class="cell-input" dir="ltr" maxlength="100"
+                     [class.invalid]="rowSubmitted && rowDataKeyError"
+                     [(ngModel)]="rowDraft.dataKey" />
+              @if (rowSubmitted && rowDataKeyError) { <small class="error">{{ rowDataKeyError }}</small> }
+            </td>
+            <td>
+              <p-select [options]="typeOptions" [(ngModel)]="rowDraft.type" appendTo="body" />
+            </td>
+            <td>
+              <p-toggleswitch [(ngModel)]="rowDraft.isPail" />
+            </td>
+            <td class="actions">
+              <p-button icon="pi pi-check" [text]="true" [rounded]="true" (onClick)="saveEdit()" />
+              <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary" (onClick)="cancelEdit()" />
+            </td>
+          </tr>
+        } @else {
+          <tr>
+            <td class="col-name">{{ field.shemSadeh }}</td>
+            <td class="col-muted">{{ field.dataKey }}</td>
+            <td class="col-muted">{{ field.type }}</td>
+            <td>{{ field.isPail ? 'כן' : 'לא' }}</td>
+            <td class="actions">
+              <p-button icon="pi pi-pencil" [text]="true" [rounded]="true" (onClick)="startEdit(field)" />
+              <p-button icon="pi pi-trash" [text]="true" [rounded]="true" severity="danger" (onClick)="confirmDelete(field)" />
+            </td>
+          </tr>
+        }
+      </ng-template>
 
-    <ng-template #emptymessage>
-      <tr>
-        <td colspan="5" class="empty">לא הוגדרו שדות חכמים.</td>
-      </tr>
-    </ng-template>
-  </p-table>
+      <ng-template #emptymessage>
+        <tr>
+          <td colspan="5" class="empty-state">לא הוגדרו שדות חכמים.</td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
 </div>
 
 <p-dialog
-  [header]="isEdit ? 'עריכת שדה' : 'הוספת שדה'"
+  header="הוספת שדה"
   [(visible)]="dialogVisible"
   [modal]="true"
   [style]="{ width: '28rem' }">
@@ -62,9 +91,11 @@
   </div>
 
   <ng-template #footer>
-    <p-button label="ביטול" [text]="true" severity="secondary" (onClick)="dialogVisible = false" />
-    <p-button label="שמירה" (onClick)="save()" />
+    <div class="dialog-footer">
+      <p-button label="ביטול" [text]="true" severity="secondary" (onClick)="dialogVisible = false" />
+      <p-button label="שמירה" (onClick)="save()" />
+    </div>
   </ng-template>
 </p-dialog>
 
-<p-confirmdialog />
+<p-confirmdialog styleClass="brand-confirm" />

@@ -27,60 +27,53 @@ export class SmartFieldsSettingsComponent {
   fields = signal<SmartField[]>(MOCK_SMART_FIELDS);
   typeOptions = ['text', 'number', 'date'];
 
+  // הוספה (דיאלוג)
   dialogVisible = false;
-  isEdit = false;
   submitted = false;
   draft: SmartField = this.emptyField();
 
-  get shemError(): string {
-    return this.draft.shemSadeh.trim() ? '' : 'שם שדה הוא שדה חובה';
-  }
+  // עריכה בשורה
+  editingId = signal<number | null>(null);
+  rowDraft: SmartField = this.emptyField();
+  rowSubmitted = false;
 
-  get dataKeyError(): string {
-    const v = this.draft.dataKey.trim();
-    if (!v) return 'מפתח נתון הוא שדה חובה';
-    if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(v)) {
-      return 'באנגלית בלבד, מתחיל באות, בלי רווחים (למשל fullName)';
-    }
-    const exists = this.fields().some(
-      f => f.idRec !== this.draft.idRec && f.dataKey.toLowerCase() === v.toLowerCase());
-    return exists ? 'מפתח נתון זה כבר קיים' : '';
-  }
-
-  get isValid(): boolean {
-    return !this.shemError && !this.dataKeyError;
-  }
+  get shemError(): string { return this.shemErrorOf(this.draft); }
+  get dataKeyError(): string { return this.dataKeyErrorOf(this.draft); }
+  get rowShemError(): string { return this.shemErrorOf(this.rowDraft); }
+  get rowDataKeyError(): string { return this.dataKeyErrorOf(this.rowDraft); }
 
   openAdd(): void {
     this.draft = this.emptyField();
-    this.isEdit = false;
-    this.submitted = false;
-    this.dialogVisible = true;
-  }
-
-  openEdit(field: SmartField): void {
-    this.draft = { ...field };
-    this.isEdit = true;
     this.submitted = false;
     this.dialogVisible = true;
   }
 
   save(): void {
     this.submitted = true;
-    if (!this.isValid) return;
-    const clean: SmartField = {
-      ...this.draft,
-      shemSadeh: this.draft.shemSadeh.trim(),
-      dataKey: this.draft.dataKey.trim(),
-    };
-    if (this.isEdit) {
-      this.fields.update(list => list.map(f => (f.idRec === clean.idRec ? clean : f)));
-    } else {
-      const nextId = Math.max(0, ...this.fields().map(f => f.idRec)) + 1;
-      this.fields.update(list => [...list, { ...clean, idRec: nextId }]);
-    }
+    if (this.shemError || this.dataKeyError) return;
+    const nextId = Math.max(0, ...this.fields().map(f => f.idRec)) + 1;
+    this.fields.update(list => [...list, this.cleaned(this.draft, nextId)]);
     this.dialogVisible = false;
     this.submitted = false;
+  }
+
+  startEdit(field: SmartField): void {
+    this.rowDraft = { ...field };
+    this.rowSubmitted = false;
+    this.editingId.set(field.idRec);
+  }
+
+  cancelEdit(): void {
+    this.editingId.set(null);
+    this.rowSubmitted = false;
+  }
+
+  saveEdit(): void {
+    this.rowSubmitted = true;
+    if (this.rowShemError || this.rowDataKeyError) return;
+    const clean = this.cleaned(this.rowDraft, this.rowDraft.idRec);
+    this.fields.update(list => list.map(f => (f.idRec === clean.idRec ? clean : f)));
+    this.cancelEdit();
   }
 
   confirmDelete(field: SmartField): void {
@@ -88,10 +81,32 @@ export class SmartFieldsSettingsComponent {
       header: 'מחיקת שדה',
       message: `האם למחוק את "${field.shemSadeh}"?`,
       icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'כן',
-      rejectLabel: 'לא',
-      accept: () => this.fields.update(list => list.filter(f => f.idRec !== field.idRec)),
+            acceptButtonProps: { label: 'מחיקה', severity: 'danger' },
+      rejectButtonProps: { label: 'ביטול', severity: 'secondary', text: true },
+      accept: () => {
+        if (this.editingId() === field.idRec) this.cancelEdit();
+        this.fields.update(list => list.filter(f => f.idRec !== field.idRec));
+      },
     });
+  }
+
+  private shemErrorOf(f: SmartField): string {
+    return f.shemSadeh.trim() ? '' : 'שם שדה הוא שדה חובה';
+  }
+
+  private dataKeyErrorOf(f: SmartField): string {
+    const v = f.dataKey.trim();
+    if (!v) return 'מפתח נתון הוא שדה חובה';
+    if (!/^[A-Za-z][A-Za-z0-9_]*$/.test(v)) {
+      return 'באנגלית בלבד, מתחיל באות, בלי רווחים (למשל fullName)';
+    }
+    const exists = this.fields().some(
+      x => x.idRec !== f.idRec && x.dataKey.toLowerCase() === v.toLowerCase());
+    return exists ? 'מפתח נתון זה כבר קיים' : '';
+  }
+
+  private cleaned(f: SmartField, idRec: number): SmartField {
+    return { ...f, idRec, shemSadeh: f.shemSadeh.trim(), dataKey: f.dataKey.trim() };
   }
 
   private emptyField(): SmartField {
