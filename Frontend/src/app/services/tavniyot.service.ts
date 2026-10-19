@@ -35,8 +35,8 @@ export class TavniyotService {
   }
 
   // שמירת הטופס בשרת.
-  saveForm(details: FormDetails): Observable<unknown> {
-    return this.http.post<unknown>(
+  saveForm(details: FormDetails): Observable<FormDetails> {
+    return this.http.post<FormDetails>(
       `${this.baseUrl}/SaveForm`,
       details
     );

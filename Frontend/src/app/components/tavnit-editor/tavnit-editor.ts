@@ -58,6 +58,9 @@ export class TavnitEditor {
 
   // מונע לחיצה כפולה בזמן השמירה.
   isSaving = false;
+
+  // מזהה התבנית מהשרת. ריק עד השמירה הראשונה, ואז כל שמירה יוצרת גרסה חדשה של אותה תבנית.
+  private idRecTavnit: number | null = null;
   // מעבר בין לשוניות.
   selectTab(tab: EditorTab): void {
     this.activeTab = tab;
@@ -182,7 +185,7 @@ publishForm(): void {
 
   // בניית FormDetails בהתאם למודל שסיפקת.
   const details = {
-    idRecTavnit: null,
+    idRecTavnit: this.idRecTavnit,
     shemTofes: fullFormName,
     form: {
       controls,
@@ -202,6 +205,7 @@ publishForm(): void {
     )
     .subscribe({
       next: response => {
+        this.idRecTavnit = response.idRecTavnit ?? null;
         console.log('הטופס נשמר:', response);
         alert('הטופס נשמר בהצלחה!');
       },
