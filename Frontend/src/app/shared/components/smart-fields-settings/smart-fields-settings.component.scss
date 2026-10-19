@@ -1,0 +1,233 @@
+$text-dark: #1e293b;
+$text-muted: #64748b;
+$border: #e2e8f0;
+$row-border: #f1f5f9;
+$head-bg: #f8fafc;
+$primary: #2563eb;
+$primary-hover: #1d4ed8;
+$editing-bg: #eff6ff;
+$danger: #ef4444;
+
+
+@mixin brand-vars {
+  --p-button-primary-background: #{$primary};
+  --p-button-primary-border-color: #{$primary};
+  --p-button-primary-hover-background: #{$primary-hover};
+  --p-button-primary-hover-border-color: #{$primary-hover};
+  --p-button-primary-focus-ring-color: #{$primary};
+  --p-button-text-primary-color: #{$primary};
+  --p-button-text-primary-hover-background: rgba(37, 99, 235, 0.08);
+  --p-toggleswitch-checked-background: #{$primary};
+  --p-toggleswitch-checked-hover-background: #{$primary-hover};
+  --p-inputtext-focus-border-color: #{$primary};
+  --p-select-focus-border-color: #{$primary};
+  --p-focus-ring-color: #{$primary};
+  --p-paginator-nav-button-selected-background: #{$editing-bg};
+  --p-paginator-nav-button-selected-color: #{$primary};
+}
+
+:host {
+  display: block;
+  direction: rtl;
+  @include brand-vars;
+}
+
+
+.settings-container {
+  .title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+
+    h3 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 700;
+      color: $text-dark;
+    }
+  }
+}
+
+.table-card {
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid $border;
+  border-radius: 16px;
+}
+
+
+:host ::ng-deep {
+  .p-datatable {
+    font-size: inherit;
+    background: transparent;
+  }
+
+  .p-datatable-table {
+    width: 100%;
+    min-width: 560px;
+    border-collapse: collapse;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th {
+    padding: 12px 24px;
+    font-size: 15px;
+    font-weight: 600;
+    color: $text-muted;
+    text-align: start;
+    background: $head-bg;
+    border: none;
+    border-bottom: 1px solid $border;
+  }
+
+  .p-datatable .p-datatable-tbody > tr {
+    background: transparent;
+    transition: background 0.15s;
+
+    > td {
+      padding: 16px 24px;
+      font-size: 16px;
+      color: $text-dark;
+      text-align: start;
+      background: transparent;
+      border: none;
+      border-bottom: 1px solid $row-border;
+    }
+
+    &:last-child > td {
+      border-bottom: none;
+    }
+  }
+
+  
+  .p-datatable .p-datatable-tbody > tr:nth-child(even) {
+    background: $head-bg;
+  }
+
+  
+  .p-datatable .p-datatable-tbody > tr:hover {
+    background: $editing-bg;
+  }
+
+  
+  .p-datatable .p-datatable-tbody > tr.editing,
+  .p-datatable .p-datatable-tbody > tr.editing:hover {
+    background: $editing-bg;
+  }
+
+  .col-name {
+    font-weight: 700;
+  }
+
+  .col-muted {
+    color: $text-muted !important;
+  }
+
+  .empty-state {
+    padding: 26px 24px !important;
+    text-align: center !important;
+    font-style: italic;
+    color: #94a3b8 !important;
+  }
+
+
+  td.actions {
+    width: 1%;
+    white-space: nowrap;
+    text-align: left !important;
+    opacity: 0;
+    transition: opacity 0.15s;
+  }
+
+  .p-datatable-tbody > tr:hover td.actions,
+  .p-datatable-tbody > tr:focus-within td.actions,
+  .p-datatable-tbody > tr.editing td.actions {
+    opacity: 1;
+  }
+
+  
+  .p-paginator {
+    padding: 12px 24px;
+    font-family: inherit;
+    background: transparent;
+    border: none;
+    border-top: 1px solid $border;
+  }
+
+  
+  .p-paginator .p-paginator-first-icon,
+  .p-paginator .p-paginator-prev-icon,
+  .p-paginator .p-paginator-next-icon,
+  .p-paginator .p-paginator-last-icon {
+    transform: scaleX(-1);
+  }
+
+  
+  .p-paginator .p-paginator-page.p-paginator-page-selected {
+    outline: none;
+    box-shadow: none;
+    border: 1px solid #bfdbfe;
+  }
+
+  
+  .p-paginator .p-paginator-page:focus-visible,
+  .p-paginator .p-paginator-first:focus-visible,
+  .p-paginator .p-paginator-prev:focus-visible,
+  .p-paginator .p-paginator-next:focus-visible,
+  .p-paginator .p-paginator-last:focus-visible {
+    outline: 2px solid $primary;
+    outline-offset: 2px;
+  }
+}
+
+
+.cell-input {
+  width: 100%;
+  max-width: 240px;
+}
+
+.invalid {
+  border-color: $danger !important;
+}
+
+.error {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  color: $danger;
+}
+
+
+.form {
+  @include brand-vars;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  direction: rtl;
+
+  label {
+    font-size: 14px;
+    color: $text-dark;
+  }
+
+  input,
+  p-select {
+    width: 100%;
+  }
+}
+
+.switch-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 8px;
+}
+
+.dialog-footer {
+  @include brand-vars;
+  display: flex;
+  justify-content: flex-start;
+  direction: ltr;
+  gap: 8px;
+  width: 100%;
+}
