@@ -35,7 +35,7 @@ namespace TavniyotBuilder.Api.Controllers
         }
 
         // ---------------- SmartFields ----------------
-
+        [Authorize]
         [HttpGet("smart-fields")]
         public async Task<IActionResult> GetSmartFields([FromQuery] bool onlyActive = false)
         {
@@ -43,6 +43,7 @@ namespace TavniyotBuilder.Api.Controllers
             catch (Exception ex) { return ServerError(nameof(GetSmartFields), ex); }
         }
 
+        [Authorize]
         [HttpPost("smart-fields")]
         public async Task<IActionResult> AddSmartField([FromBody] SmartField field)
         {
@@ -51,6 +52,7 @@ namespace TavniyotBuilder.Api.Controllers
             catch (Exception ex) { return ServerError(nameof(AddSmartField), ex); }
         }
 
+        [Authorize]
         [HttpPut("smart-fields/{id:int}")]
         public async Task<IActionResult> UpdateSmartField(int id, [FromBody] SmartField field)
         {
@@ -60,6 +62,7 @@ namespace TavniyotBuilder.Api.Controllers
             catch (Exception ex) { return ServerError(nameof(UpdateSmartField), ex); }
         }
 
+        [Authorize]
         [HttpDelete("smart-fields/{id:int}")]
         public async Task<IActionResult> DeleteSmartField(int id)
         {
