@@ -8,7 +8,7 @@ $primary-hover: #1d4ed8;
 $editing-bg: #eff6ff;
 $danger: #ef4444;
 
-
+// צבעי המערכת (תכלת) עבור רכיבי PrimeNG
 @mixin brand-vars {
   --p-button-primary-background: #{$primary};
   --p-button-primary-border-color: #{$primary};
@@ -32,7 +32,7 @@ $danger: #ef4444;
   @include brand-vars;
 }
 
-
+// ---------- כותרת וכרטיס ----------
 .settings-container {
   .title-row {
     display: flex;
@@ -56,7 +56,7 @@ $danger: #ef4444;
   border-radius: 16px;
 }
 
-
+// ---------- הטבלה (PrimeNG) ----------
 :host ::ng-deep {
   .p-datatable {
     font-size: inherit;
@@ -69,11 +69,12 @@ $danger: #ef4444;
     border-collapse: collapse;
   }
 
+  // שינוי: כותרות עמודות מודגשות, גדולות יותר ועם יותר מקום
   .p-datatable .p-datatable-thead > tr > th {
-    padding: 12px 24px;
-    font-size: 15px;
-    font-weight: 600;
-    color: $text-muted;
+    padding: 18px 24px;
+    font-size: 17px;
+    font-weight: 700;
+    color: $text-dark;
     text-align: start;
     background: $head-bg;
     border: none;
@@ -85,7 +86,8 @@ $danger: #ef4444;
     transition: background 0.15s;
 
     > td {
-      padding: 16px 24px;
+      // שינוי: שורות נמוכות יותר
+      padding: 11px 24px;
       font-size: 16px;
       color: $text-dark;
       text-align: start;
@@ -99,24 +101,25 @@ $danger: #ef4444;
     }
   }
 
-  
+  // זברה
   .p-datatable .p-datatable-tbody > tr:nth-child(even) {
     background: $head-bg;
   }
 
-  
+  // hover (אחרי הזברה כדי שינצח אותה)
   .p-datatable .p-datatable-tbody > tr:hover {
     background: $editing-bg;
   }
 
-  
+  // שורה בעריכה
   .p-datatable .p-datatable-tbody > tr.editing,
   .p-datatable .p-datatable-tbody > tr.editing:hover {
     background: $editing-bg;
   }
 
+  // שינוי: שם השדה לא מודגש
   .col-name {
-    font-weight: 700;
+    font-weight: 400;
   }
 
   .col-muted {
@@ -130,7 +133,7 @@ $danger: #ef4444;
     color: #94a3b8 !important;
   }
 
-
+  // עמודת הפעולות: מופיעה רק ב-hover / בעריכה
   td.actions {
     width: 1%;
     white-space: nowrap;
@@ -145,7 +148,7 @@ $danger: #ef4444;
     opacity: 1;
   }
 
-  
+  // ---------- paginator ----------
   .p-paginator {
     padding: 12px 24px;
     font-family: inherit;
@@ -154,7 +157,7 @@ $danger: #ef4444;
     border-top: 1px solid $border;
   }
 
-  
+  // חצים הפוכים עבור RTL
   .p-paginator .p-paginator-first-icon,
   .p-paginator .p-paginator-prev-icon,
   .p-paginator .p-paginator-next-icon,
@@ -162,14 +165,14 @@ $danger: #ef4444;
     transform: scaleX(-1);
   }
 
-  
+  // העמוד הנבחר: בלי טבעת ירוקה
   .p-paginator .p-paginator-page.p-paginator-page-selected {
     outline: none;
     box-shadow: none;
     border: 1px solid #bfdbfe;
   }
 
-  
+  // טבעת פוקוס בתכלת
   .p-paginator .p-paginator-page:focus-visible,
   .p-paginator .p-paginator-first:focus-visible,
   .p-paginator .p-paginator-prev:focus-visible,
@@ -180,7 +183,7 @@ $danger: #ef4444;
   }
 }
 
-
+// ---------- שדות עריכה בשורה ----------
 .cell-input {
   width: 100%;
   max-width: 240px;
@@ -197,7 +200,7 @@ $danger: #ef4444;
   color: $danger;
 }
 
-
+// ---------- חלון הוספה (נפתח ב-body, לכן המשתנים כאן) ----------
 .form {
   @include brand-vars;
   display: flex;
