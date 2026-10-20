@@ -8,19 +8,6 @@ import { ControlType } from '../../../../models/enums/control-type.enum';
 import { DraggableField } from './draggable-field/draggable-field';
 import { FormControl } from '../../../../models/form-control.model';
 
-export type FieldType = ControlType;
-
-export interface FieldOption {
-  id?: string;
-  type: FieldType;
-  label: string;
-  required?: boolean;
-  readOnly?: boolean;
-  smartFieldKey?: string | null;
-  helpText?: string | null;
-  defaultValue?: string | null;
-}
-
 @Component({
   selector: 'app-build-drag-sidebar',
   standalone: true,
@@ -31,19 +18,37 @@ export interface FieldOption {
 export class BuildDragSidebar implements OnInit {
   private readonly tavniyotService = inject(TavniyotService);
 
-  fields: FieldOption[] = [
-    { type: ControlType.Text, label: 'טקסט קצר', required: false, readOnly: false },
-    { type: ControlType.Paragraph, label: 'פסקה', required: false, readOnly: false },
-    { type: ControlType.Date, label: 'תאריך', required: false, readOnly: false },
-    { type: ControlType.File, label: 'העלאת קובץ', required: false, readOnly: false }
-  ];
+  // הפקדים הבסיסיים נטענים מהשרת (GetBasicControlsList).
+  fields: FormControl[] = [];
+  basicFieldsError = false;
 
-  smartFields: FieldOption[] = [];
+  smartFields: FormControl[] = [];
   loadingSmartFields = false;
   smartFieldsError = false;
 
   ngOnInit(): void {
+    this.loadBasicFields();
     this.loadSmartFields();
+  }
+
+  private loadBasicFields(): void {
+    this.basicFieldsError = false;
+
+    this.tavniyotService.GetBasicControlsList().subscribe({
+      next: (response: FormControl[]) => {
+        this.fields = response.map(field => ({
+          ...field,
+          // השרת שולח את הסוג כשם (למשל "Paragraph"), וה-enum בקליינט מספרי, ולכן ממירים
+          type: typeof field.type === 'string'
+            ? ControlType[field.type as keyof typeof ControlType]
+            : field.type
+        }));
+      },
+      error: error => {
+        console.error('Failed to load basic controls', error);
+        this.basicFieldsError = true;
+      }
+    });
   }
 
   private loadSmartFields(): void {
@@ -53,17 +58,12 @@ export class BuildDragSidebar implements OnInit {
     this.tavniyotService.GetSmartFieldsList().subscribe({
       next: (response: FormControl[]) => {
         this.smartFields = response.map(field => ({
-          id: field.id || undefined,
+          ...field,
           // השרת שולח את הסוג כשם (למשל "HR_Name"), וה-enum בקליינט מספרי, ולכן ממירים
           type: typeof field.type === 'string'
             ? ControlType[field.type as keyof typeof ControlType]
             : field.type,
-          label: field.label,
-          required: field.required,
-          readOnly: true,
-          smartFieldKey: field.smartFieldKey ?? null,
-          helpText: field.helpText ?? null,
-          defaultValue: field.defaultValue ?? null
+          readOnly: true
         }));
 
         this.loadingSmartFields = false;

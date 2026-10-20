@@ -42,6 +42,10 @@
   <!-- כותרת הפקדים הבסיסיים -->
   <p class="section-title basic-title">פקדים בסיסיים</p>
 
+  <p *ngIf="basicFieldsError" class="hint error">
+    טעינת הפקדים הבסיסיים נכשלה.
+  </p>
+
   <div
     class="fields-list basic-fields"
     cdkDropList

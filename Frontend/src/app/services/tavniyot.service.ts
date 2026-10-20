@@ -34,6 +34,12 @@ export class TavniyotService {
     );
   }
 
+  GetBasicControlsList(): Observable<FormControl[]> {
+    return this.http.get<FormControl[]>(
+      `${this.baseUrl}/GetBasicControlsList`
+    );
+  }
+
   // שמירת הטופס בשרת.
   saveForm(details: FormDetails): Observable<FormDetails> {
     return this.http.post<FormDetails>(

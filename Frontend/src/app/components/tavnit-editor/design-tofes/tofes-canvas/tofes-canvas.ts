@@ -13,7 +13,6 @@ import {
   CdkDropList
 } from '@angular/cdk/drag-drop';
 
-import { FieldOption } from '../build-drag-sidebar/build-drag-sidebar';
 import { RenderedControl } from './rendered-control/rendered-control';
 import { FormControl } from '../../../../models/form-control.model';
 
@@ -82,7 +81,7 @@ export class TofesCanvas {
   }
 
   // הוספת פקד מהסרגל למשטח.
-  drop(event: CdkDragDrop<CanvasField[], FieldOption[]>): void {
+  drop(event: CdkDragDrop<CanvasField[], FormControl[]>): void {
     const option = event.item.data;
 
     if (!option) {
