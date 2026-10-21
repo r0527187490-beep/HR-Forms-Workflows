@@ -164,13 +164,27 @@ namespace TavniyotBuilder.Api.Services
                 throw new ArgumentException("The form name is too long (up to 255 characters)");
             }
 
-            if (formDetails.Form == null)
+            bool hasForm = formDetails.Form != null;
+            bool hasHtml = formDetails.TochenHtml != null;
+
+            if (hasForm == hasHtml)
             {
-                throw new ArgumentException("The form has no controls");
+                throw new ArgumentException("Exactly one of Form or TochenHtml must be provided");
             }
 
-            string mivneJson = await PrepareFormForSave(formDetails.Form);
-            bool isKolelShdotChachamim = formDetails.Form.Controls.Any(control => control.SmartFieldKey != null);
+            string? mivneJson = null;
+            string? tochenHtml = null;
+            bool isKolelShdotChachamim = false;
+
+            if (hasForm)
+            {
+                mivneJson = await PrepareFormForSave(formDetails.Form!);
+                isKolelShdotChachamim = formDetails.Form!.Controls.Any(control => control.SmartFieldKey != null);
+            }
+            else
+            {
+                tochenHtml = Clean(formDetails.TochenHtml!);
+            }
 
             int? idRecTavnit = formDetails.IdRecTavnit > 0 ? formDetails.IdRecTavnit : null;
 
@@ -181,6 +195,8 @@ namespace TavniyotBuilder.Api.Services
             parameters.Add("@Teur", formDetails.Teur, DbType.String, size: -1);
             parameters.Add("@IsKolelShdotChachamim", isKolelShdotChachamim, DbType.Boolean);
             parameters.Add("@MivneJson", mivneJson, DbType.String, size: -1);
+            parameters.Add("@TochenHtml", tochenHtml, DbType.String, size: -1);
+            parameters.Add("@IsPail", formDetails.IsPail, DbType.Boolean);
             parameters.Add("@IdYotzer", idYotzer, DbType.Int32);
 
             using var connection = _tavniyotContext.CreateConnection();
@@ -195,6 +211,8 @@ namespace TavniyotBuilder.Api.Services
             {
                 throw new ArgumentException($"Form {formDetails.IdRecTavnit} was not found");
             }
+
+            savedForm.TochenHtml = tochenHtml;
 
             return savedForm;
         }
