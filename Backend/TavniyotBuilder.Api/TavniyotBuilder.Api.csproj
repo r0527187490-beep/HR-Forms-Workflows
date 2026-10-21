@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Content Remove="C:\Users\חנה\.nuget\packages\nmhlogin\1.0.23\contentFiles\any\net7.0\appsettings.Development.json" />
+   <Content Remove="$(NuGetPackageRoot)nmhlogin\1.0.23\contentFiles\any\net7.0\appsettings.Development.json" />
   </ItemGroup>
 
   <ItemGroup>
