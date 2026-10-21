@@ -253,6 +253,33 @@ namespace TavniyotBuilder.Api.Services
             };
         }
 
+        public async Task<List<FormDetails>> GetFormVersions(int idRecTavnit)
+        {
+            var sp = "GetTofesVersions";
+            var parameters = new DynamicParameters();
+            parameters.Add("@IdRecTavnit", idRecTavnit, DbType.Int32);
+
+            using var connection = _tavniyotContext.CreateConnection();
+
+            var versions = (await connection.QueryAsync<FormDetails>(
+                sql: sp,
+                param: parameters,
+                commandType: CommandType.StoredProcedure
+            )).ToList();
+
+            if (versions.Count == 0)
+            {
+                throw new ArgumentException($"Form {idRecTavnit} was not found");
+            }
+
+            foreach (var version in versions)
+            {
+                version.IdRecTavnit = idRecTavnit;
+            }
+
+            return versions;
+        }
+
         private async Task<List<string>> ValidateFormStructure(FormStructure? form)
         {
             var errors = new List<string>();

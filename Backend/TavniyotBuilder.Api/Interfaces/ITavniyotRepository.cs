@@ -11,6 +11,7 @@ namespace TavniyotBuilder.Api.Interfaces
         FormStructure RestoreFormStructure(string mivneJson);
         Task<FormDetails> SaveForm(FormDetails formDetails, int idYotzer);
         Task<FormDetails> GetForm(int idRecTavnit, int? misparGirsa = null);
+        Task<List<FormDetails>> GetFormVersions(int idRecTavnit);
 
         string Clean(string html);
         Task<List<SmartField>> GetSmartFieldsAsync(bool onlyActive);
