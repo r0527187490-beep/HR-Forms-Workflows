@@ -6,6 +6,7 @@ import { CodTeur } from '../models/cod-teur';
 import { Tavnit } from '../models/tavnit';
 import { FormControl } from '../models/form-control.model';
 import { FormDetails } from '../models/form-details.model';
+import { SmartField } from '../models/smart-field';
 
 
 
@@ -45,6 +46,35 @@ export class TavniyotService {
     return this.http.post<FormDetails>(
       `${this.baseUrl}/SaveForm`,
       details
+    );
+  }
+
+  // ---- הגדרות שדות חכמים ----
+
+  getSmartFields(onlyActive = false): Observable<SmartField[]> {
+    return this.http.get<SmartField[]>(
+      `${this.baseUrl}/smart-fields`,
+      { params: { onlyActive } }
+    );
+  }
+
+  addSmartField(field: SmartField): Observable<SmartField> {
+    return this.http.post<SmartField>(
+      `${this.baseUrl}/smart-fields`,
+      field
+    );
+  }
+
+  updateSmartField(field: SmartField): Observable<SmartField> {
+    return this.http.put<SmartField>(
+      `${this.baseUrl}/smart-fields/${field.idRec}`,
+      field
+    );
+  }
+
+  deleteSmartField(idRec: number): Observable<void> {
+    return this.http.delete<void>(
+      `${this.baseUrl}/smart-fields/${idRec}`
     );
   }
 }

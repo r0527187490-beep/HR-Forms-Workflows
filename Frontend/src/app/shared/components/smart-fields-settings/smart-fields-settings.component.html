@@ -4,6 +4,10 @@
     <p-button label="הוספת שדה" icon="pi pi-plus" (onClick)="openAdd()" />
   </div>
 
+  @if (serverError()) {
+    <small class="error">{{ serverError() }}</small>
+  }
+
   <div class="table-card">
     <p-table [value]="fields()" dataKey="idRec" [paginator]="true" [rows]="5">
       <ng-template #header>
@@ -88,6 +92,8 @@
       <p-toggleswitch inputId="isPail" [(ngModel)]="draft.isPail" />
       <label for="isPail">פעיל</label>
     </div>
+
+    @if (serverError()) { <small class="error">{{ serverError() }}</small> }
   </div>
 
   <ng-template #footer>

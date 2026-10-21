@@ -1,4 +1,4 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject, OnInit, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ConfirmationService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -9,7 +9,7 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 import { SmartField } from '../../../models/smart-field';
-import { MOCK_SMART_FIELDS } from './smart-fields-settings.mock';
+import { TavniyotService } from '../../../services/tavniyot.service';
 
 @Component({
   selector: 'app-smart-fields-settings',
@@ -21,10 +21,12 @@ import { MOCK_SMART_FIELDS } from './smart-fields-settings.mock';
   templateUrl: './smart-fields-settings.component.html',
   styleUrl: './smart-fields-settings.component.scss',
 })
-export class SmartFieldsSettingsComponent {
+export class SmartFieldsSettingsComponent implements OnInit {
   private confirmationService = inject(ConfirmationService);
+  private tavniyotService = inject(TavniyotService);
 
-  fields = signal<SmartField[]>(MOCK_SMART_FIELDS);
+  fields = signal<SmartField[]>([]);
+  serverError = signal('');
   typeOptions = ['text', 'number', 'date'];
 
   // הוספה (דיאלוג)
@@ -42,24 +44,39 @@ export class SmartFieldsSettingsComponent {
   get rowShemError(): string { return this.shemErrorOf(this.rowDraft); }
   get rowDataKeyError(): string { return this.dataKeyErrorOf(this.rowDraft); }
 
+  ngOnInit(): void {
+    this.tavniyotService.getSmartFields().subscribe({
+      next: list => this.fields.set(list),
+      error: err => this.serverError.set(this.messageOf(err)),
+    });
+  }
+
   openAdd(): void {
     this.draft = this.emptyField();
     this.submitted = false;
+    this.serverError.set('');
     this.dialogVisible = true;
   }
 
   save(): void {
     this.submitted = true;
     if (this.shemError || this.dataKeyError) return;
-    const nextId = Math.max(0, ...this.fields().map(f => f.idRec)) + 1;
-    this.fields.update(list => [...list, this.cleaned(this.draft, nextId)]);
-    this.dialogVisible = false;
-    this.submitted = false;
+
+    this.tavniyotService.addSmartField(this.cleaned(this.draft, 0)).subscribe({
+      next: saved => {
+        this.fields.update(list => [...list, saved]);
+        this.dialogVisible = false;
+        this.submitted = false;
+        this.serverError.set('');
+      },
+      error: err => this.serverError.set(this.messageOf(err)),
+    });
   }
 
   startEdit(field: SmartField): void {
     this.rowDraft = { ...field };
     this.rowSubmitted = false;
+    this.serverError.set('');
     this.editingId.set(field.idRec);
   }
 
@@ -71,9 +88,16 @@ export class SmartFieldsSettingsComponent {
   saveEdit(): void {
     this.rowSubmitted = true;
     if (this.rowShemError || this.rowDataKeyError) return;
+
     const clean = this.cleaned(this.rowDraft, this.rowDraft.idRec);
-    this.fields.update(list => list.map(f => (f.idRec === clean.idRec ? clean : f)));
-    this.cancelEdit();
+    this.tavniyotService.updateSmartField(clean).subscribe({
+      next: saved => {
+        this.fields.update(list => list.map(f => (f.idRec === saved.idRec ? saved : f)));
+        this.cancelEdit();
+        this.serverError.set('');
+      },
+      error: err => this.serverError.set(this.messageOf(err)),
+    });
   }
 
   confirmDelete(field: SmartField): void {
@@ -81,13 +105,23 @@ export class SmartFieldsSettingsComponent {
       header: 'מחיקת שדה',
       message: `האם למחוק את "${field.shemSadeh}"?`,
       icon: 'pi pi-exclamation-triangle',
-            acceptButtonProps: { label: 'מחיקה', severity: 'danger' },
+      acceptButtonProps: { label: 'מחיקה', severity: 'danger' },
       rejectButtonProps: { label: 'ביטול', severity: 'secondary', text: true },
       accept: () => {
-        if (this.editingId() === field.idRec) this.cancelEdit();
-        this.fields.update(list => list.filter(f => f.idRec !== field.idRec));
+        this.tavniyotService.deleteSmartField(field.idRec).subscribe({
+          next: () => {
+            if (this.editingId() === field.idRec) this.cancelEdit();
+            this.fields.update(list => list.filter(f => f.idRec !== field.idRec));
+            this.serverError.set('');
+          },
+          error: err => this.serverError.set(this.messageOf(err)),
+        });
       },
     });
+  }
+
+  private messageOf(err: any): string {
+    return err?.error?.message ?? 'אירעה שגיאה בשרת';
   }
 
   private shemErrorOf(f: SmartField): string {
