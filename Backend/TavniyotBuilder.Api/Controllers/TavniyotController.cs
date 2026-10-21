@@ -137,11 +137,11 @@ namespace TavniyotBuilder.Api.Controllers
 
         [Authorize]
         [HttpGet("GetForm")]
-        public async Task<IActionResult> GetForm(int idRecTavnit)
+        public async Task<IActionResult> GetForm(int idRecTavnit, int? misparGirsa = null)
         {
             try
             {
-                FormDetails formDetails = await _tavniyotRepository.GetForm(idRecTavnit);
+                FormDetails formDetails = await _tavniyotRepository.GetForm(idRecTavnit, misparGirsa);
 
                 return Ok(formDetails);
             }
@@ -152,6 +152,26 @@ namespace TavniyotBuilder.Api.Controllers
             catch (Exception ex)
             {
                 return StatusCode(500, $"{nameof(GetForm)} Exception: {ex.Message}");
+            }
+        }
+
+        [Authorize]
+        [HttpGet("GetFormVersions")]
+        public async Task<IActionResult> GetFormVersions(int idRecTavnit)
+        {
+            try
+            {
+                List<FormDetails> versions = await _tavniyotRepository.GetFormVersions(idRecTavnit);
+
+                return Ok(versions);
+            }
+            catch (ArgumentException ex)
+            {
+                return BadRequest(ex.Message);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, $"{nameof(GetFormVersions)} Exception: {ex.Message}");
             }
         }
 
