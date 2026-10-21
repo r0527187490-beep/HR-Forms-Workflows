@@ -217,11 +217,12 @@ namespace TavniyotBuilder.Api.Services
             return savedForm;
         }
 
-        public async Task<FormDetails> GetForm(int idRecTavnit)
+        public async Task<FormDetails> GetForm(int idRecTavnit, int? misparGirsa = null)
         {
             var sp = "GetTofes";
             var parameters = new DynamicParameters();
             parameters.Add("@IdRecTavnit", idRecTavnit, DbType.Int32);
+            parameters.Add("@MisparGirsa", misparGirsa, DbType.Int32);
 
             using var connection = _tavniyotContext.CreateConnection();
 
@@ -233,12 +234,9 @@ namespace TavniyotBuilder.Api.Services
 
             if (data == null)
             {
-                throw new ArgumentException($"Form {idRecTavnit} was not found");
-            }
-
-            if (data.MivneJson == null)
-            {
-                throw new ArgumentException($"Form {idRecTavnit} was not built in drag mode, so it has no controls structure");
+                throw new ArgumentException(misparGirsa == null
+                    ? $"Form {idRecTavnit} was not found"
+                    : $"Form {idRecTavnit} version {misparGirsa} was not found");
             }
 
             return new FormDetails
@@ -246,9 +244,12 @@ namespace TavniyotBuilder.Api.Services
                 IdRecTavnit = data.IdRecTavnit,
                 ShemTofes = data.ShemTofes,
                 Teur = data.Teur,
+                IsPail = data.IsPail,
                 IdRecTofesVersion = data.IdRecTofesVersion,
                 MisparGirsa = data.MisparGirsa,
-                Form = RestoreFormStructure((string)data.MivneJson)
+                IsMivneJson = data.MivneJson != null,
+                Form = data.MivneJson != null ? RestoreFormStructure((string)data.MivneJson) : null,
+                TochenHtml = data.TochenHtml
             };
         }
 
