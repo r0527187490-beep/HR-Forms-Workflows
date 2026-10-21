@@ -10,10 +10,10 @@
     "hakamat-tfasim": {
       "projectType": "application",
       "schematics": {
-  "@schematics/angular:component": {
-    "style": "scss"
-  }
-},
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
       "root": "",
       "sourceRoot": "src",
       "prefix": "app",
@@ -30,9 +30,11 @@
               }
             ],
             "styles": [
-              "src/styles.css"
+              "src/styles.scss",
+              "node_modules/primeicons/primeicons.css"
             ]
           },
+          
           "configurations": {
             "production": {
               "budgets": [

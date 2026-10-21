@@ -1,8 +1,11 @@
-﻿using Dapper;
+using Dapper;
+using Ganss.Xss;
+using Microsoft.Data.SqlClient;
 using System.Data;
 using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using System.Text.RegularExpressions;
 using TavniyotBuilder.Api.DbContext;
 using TavniyotBuilder.Api.Interfaces;
 using TavniyotBuilder.Api.Models;
@@ -19,6 +22,10 @@ namespace TavniyotBuilder.Api.Services
             { "Department", ControlType.HR_Department }
         };
 
+        private readonly HtmlSanitizer _sanitizer;
+        // Maximum allowed HTML length
+        private const int MaxHtmlLength = 1_000_000;
+
         private static readonly JsonSerializerOptions MivneJsonOptions = new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
@@ -30,6 +37,18 @@ namespace TavniyotBuilder.Api.Services
         public TavniyotService(TavniyotBuilderContext tavniyotContext)
         {
             _tavniyotContext = tavniyotContext;
+            _sanitizer = new HtmlSanitizer();
+        }
+
+        public string Clean(string html)
+        {
+            if (string.IsNullOrWhiteSpace(html))
+                throw new ArgumentException("ה-HTML לא יכול להיות ריק.");
+
+            if (html.Length > MaxHtmlLength)
+                throw new ArgumentException("ה-HTML גדול מדי.");
+
+            return _sanitizer.Sanitize(html);
         }
 
         public async Task<List<CodTeur>> GetCodTeurTavniyotTEST()
@@ -342,5 +361,113 @@ namespace TavniyotBuilder.Api.Services
             }
         }
 
+        // ---- SmartFields ----
+
+        // Regex for a valid data key
+        private static readonly Regex DataKeyRegex = new(@"^[A-Za-z][A-Za-z0-9_]*$");
+        // Allowed smart field types
+        private static readonly string[] AllowedSmartFieldTypes = { "text", "number", "date" };
+        // Message for a duplicate data key
+        private const string DuplicateKeyMessage = "מפתח נתון זה כבר קיים";
+
+        public async Task<List<SmartField>> GetSmartFieldsAsync(bool onlyActive)
+        {
+            using var connection = _tavniyotContext.CreateConnection();
+            var data = await connection.QueryAsync<SmartField>(
+                "GetSmartFields",
+                new { OnlyActive = onlyActive },
+                commandType: CommandType.StoredProcedure);
+            return data.ToList();
+        }
+
+        public async Task<SmartField> AddSmartFieldAsync(SmartField field)
+        {
+            ValidateSmartField(field);
+            using var connection = _tavniyotContext.CreateConnection();
+            await EnsureDataKeyIsUniqueAsync(connection, field.DataKey, null);
+
+            try
+            {
+                // The id arrives as 0 and is ignored; the DB creates the new id and returns it
+                field.IdRec = await connection.ExecuteScalarAsync<int>(
+                    "AddSmartField",
+                    new { field.ShemSadeh, field.DataKey, field.Type, field.IsPail },
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch (SqlException ex) when (ex.Number is 2601 or 2627)
+            {
+                // Unique index on DataKey fired (race between two requests)
+                throw new ArgumentException(DuplicateKeyMessage);
+            }
+            return field;
+        }
+
+        public async Task<SmartField> UpdateSmartFieldAsync(int id, SmartField field)
+        {
+            field.IdRec = id;                      // The id comes from the URL, not from the body
+            ValidateSmartField(field);
+            using var connection = _tavniyotContext.CreateConnection();
+            await EnsureDataKeyIsUniqueAsync(connection, field.DataKey, id);
+
+            int affected;
+            try
+            {
+                affected = await connection.ExecuteScalarAsync<int>(
+                    "UpdateSmartField",
+                    new { field.IdRec, field.ShemSadeh, field.DataKey, field.Type, field.IsPail },
+                    commandType: CommandType.StoredProcedure);
+            }
+            catch (SqlException ex) when (ex.Number is 2601 or 2627)
+            {
+                throw new ArgumentException(DuplicateKeyMessage);
+            }
+
+            if (affected == 0) throw new KeyNotFoundException("השדה לא נמצא");
+            return field;
+        }
+
+        public async Task DeleteSmartFieldAsync(int id)
+        {
+            using var connection = _tavniyotContext.CreateConnection();
+            var affected = await connection.ExecuteScalarAsync<int>(
+                "DeleteSmartField",
+                new { IdRec = id },
+                commandType: CommandType.StoredProcedure);
+
+            if (affected == 0) throw new KeyNotFoundException("השדה לא נמצא");
+        }
+
+        private static void ValidateSmartField(SmartField? field)
+        {
+            if (field == null) throw new ArgumentException("נתוני השדה חסרים");
+
+            field.ShemSadeh = (field.ShemSadeh ?? "").Trim();
+            field.DataKey = (field.DataKey ?? "").Trim();
+            field.Type = (field.Type ?? "").Trim();
+
+            if (field.ShemSadeh.Length == 0)
+                throw new ArgumentException("שם שדה הוא שדה חובה");
+            if (field.ShemSadeh.Length > 100)
+                throw new ArgumentException("שם שדה ארוך מדי (עד 100 תווים)");
+
+            if (field.DataKey.Length == 0)
+                throw new ArgumentException("מפתח נתון הוא שדה חובה");
+            if (field.DataKey.Length > 100 || !DataKeyRegex.IsMatch(field.DataKey))
+                throw new ArgumentException("מפתח נתון חייב להתחיל באות באנגלית ולכלול רק אותיות באנגלית, ספרות וקו תחתון (למשל fullName)");
+
+            if (!AllowedSmartFieldTypes.Contains(field.Type))
+                throw new ArgumentException("סוג שדה לא תקין");
+        }
+
+        private static async Task EnsureDataKeyIsUniqueAsync(
+            IDbConnection connection, string dataKey, int? excludeId)
+        {
+            var count = await connection.ExecuteScalarAsync<int>(
+                "SmartFieldDataKeyExists",
+                new { DataKey = dataKey, ExcludeIdRec = excludeId },
+                commandType: CommandType.StoredProcedure);
+
+            if (count > 0) throw new ArgumentException(DuplicateKeyMessage);
+        }
     }
 }
