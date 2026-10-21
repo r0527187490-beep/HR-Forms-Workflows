@@ -29,33 +29,45 @@
     <!-- אזור גלילה שמאפשר לראות גם קנבס גדול -->
     <div class="preview-scroll">
 
-      <!-- הקנבס שומר על המידות המקוריות -->
+      <!-- מצב תצוגה מקדימה של קוד HTML -->
       <div
-        class="preview-canvas"
-        [style.width.px]="canvasWidth"
-        [style.height.px]="canvasHeight">
+        *ngIf="isHtmlMode; else visualPreview"
+        class="html-preview"
+        [innerHTML]="html">
+      </div>
 
-        <!-- הצגת כל הפקדים במיקום ובגודל שלהם -->
+      <!-- מצב תצוגה מקדימה של בנייה בגרירה -->
+      <ng-template #visualPreview>
+
+        <!-- הקנבס שומר על המידות המקוריות -->
         <div
-          *ngFor="let field of fields"
-          class="preview-field"
-          [style.left.px]="field.x"
-          [style.top.px]="field.y"
-          [style.width.px]="field.width"
-          [style.height.px]="field.height">
+          class="preview-canvas"
+          [style.width.px]="canvasWidth"
+          [style.height.px]="canvasHeight">
 
-          <app-rendered-control
-            [field]="field">
-          </app-rendered-control>
+          <!-- הצגת כל הפקדים במיקום ובגודל שלהם -->
+          <div
+            *ngFor="let field of fields"
+            class="preview-field"
+            [style.left.px]="field.x"
+            [style.top.px]="field.y"
+            [style.width.px]="field.width"
+            [style.height.px]="field.height">
+
+            <app-rendered-control
+              [field]="field">
+            </app-rendered-control>
+
+          </div>
 
         </div>
 
-      </div>
+        <!-- הודעה כאשר אין פקדים -->
+        <p class="empty-preview" *ngIf="fields.length === 0">
+          עדיין לא נוספו פקדים לטופס.
+        </p>
 
-      <!-- הודעה כאשר אין פקדים -->
-      <p class="empty-preview" *ngIf="fields.length === 0">
-        עדיין לא נוספו פקדים לטופס.
-      </p>
+      </ng-template>
 
     </div>
 

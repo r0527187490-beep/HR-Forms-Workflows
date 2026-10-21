@@ -14,6 +14,11 @@ export class TatzugaMakdimaModal {
   // הפקדים שהועברו מהעורך
   @Input() fields: any[] = [];
 
+    // קוד ה-HTML שהתקבל מעורך הקוד.
+  @Input() html = '';
+
+  // האם להציג HTML במקום את פקדי הקנבס.
+  @Input() isHtmlMode = false;
   // מידות הקנבס המקורי
   @Input() canvasWidth = 600;
   @Input() canvasHeight = 300;

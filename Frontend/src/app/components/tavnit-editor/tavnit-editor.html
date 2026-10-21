@@ -182,23 +182,24 @@
         (canvasSizeChange)="onPreviewCanvasSizeChange($event)">
       </app-design-tofes>
     </section>
-
-    <!-- אזור קוד HTML -->
-    <section *ngIf="activeTab === 'html'">
-      <div class="html-editor-placeholder" dir="rtl">
-        אזור עריכת קוד HTML
-      </div>
-    </section>
-
+  <!-- הצגת עורך ה-HTML כאשר לשונית HTML פעילה -->
+  <section *ngIf="activeTab === 'html'">
+    <app-html-code-editor
+      [html]="htmlCode"
+      (htmlChange)="onHtmlChange($event)">
+    </app-html-code-editor>
+  </section>
   </main>
 
   <!-- חלון תצוגה מקדימה -->
-  <app-tatzuga-makdima-modal
-    [fields]="previewFields"
-    [canvasWidth]="previewCanvasWidth"
-    [canvasHeight]="previewCanvasHeight"
-    [isOpen]="isPreviewOpen"
-    (closed)="closePreview()">
-  </app-tatzuga-makdima-modal>
+<app-tatzuga-makdima-modal
+  [fields]="previewFields"
+  [canvasWidth]="previewCanvasWidth"
+  [canvasHeight]="previewCanvasHeight"
+  [isOpen]="isPreviewOpen"
+  [html]="htmlCode"
+  [isHtmlMode]="activeTab === 'html'"
+  (closed)="closePreview()">
+</app-tatzuga-makdima-modal>
 
 </div>
