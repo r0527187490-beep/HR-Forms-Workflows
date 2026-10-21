@@ -38,8 +38,9 @@ namespace TavniyotBuilder.Api.Services
         {
             _tavniyotContext = tavniyotContext;
             _sanitizer = new HtmlSanitizer();
-        }
 
+            _sanitizer.AllowedAttributes.Add("id");
+        }
         public string Clean(string html)
         {
             if (string.IsNullOrWhiteSpace(html))
