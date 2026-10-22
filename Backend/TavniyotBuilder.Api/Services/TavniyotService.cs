@@ -15,13 +15,6 @@ namespace TavniyotBuilder.Api.Services
 {
     public class TavniyotService : ITavniyotRepository
     {
-        private static readonly Dictionary<string, ControlType> ControlTypeByDataKey = new()
-        {
-            { "EmployeeName", ControlType.HR_Name },
-            { "EmployeeId", ControlType.HR_Id },
-            { "Department", ControlType.HR_Department }
-        };
-
         private readonly HtmlSanitizer _sanitizer;
         // Maximum allowed HTML length
         private const int MaxHtmlLength = 1_000_000;
@@ -105,7 +98,8 @@ namespace TavniyotBuilder.Api.Services
                     Type = controlType,
                     Label = smartField.ShemSadeh,
                     Required = false,
-                    SmartFieldKey = smartField.DataKey,
+                    IsSmartField = true,
+                    SmartFieldKey = smartField.IdRec,
                     ReadOnly = true
                 });
             }
@@ -119,11 +113,6 @@ namespace TavniyotBuilder.Api.Services
         }
         private static bool TryGetSmartFieldControlType(SmartField smartField, out ControlType controlType)
         {
-            if (ControlTypeByDataKey.TryGetValue(smartField.DataKey, out controlType))
-            {
-                return true;
-            }
-
             switch (smartField.Type?.ToLowerInvariant())
             {
                 case "text":
@@ -203,7 +192,7 @@ namespace TavniyotBuilder.Api.Services
             if (hasForm)
             {
                 mivneJson = await PrepareFormForSave(formDetails.Form!);
-                isKolelShdotChachamim = formDetails.Form!.Controls.Any(control => control.SmartFieldKey != null);
+                isKolelShdotChachamim = formDetails.Form!.Controls.Any(control => control.IsSmartField);
             }
             else
             {
@@ -337,7 +326,7 @@ namespace TavniyotBuilder.Api.Services
 
                 ValidateLayout(control, errors);
 
-                if (control.SmartFieldKey != null)
+                if (control.IsSmartField)
                 {
                     ValidateSmartFieldControl(control, smartFields, errors);
                 }
@@ -405,6 +394,11 @@ namespace TavniyotBuilder.Api.Services
 
         private void ValidateBasicControl(FormControl control, List<string> errors)
         {
+            if (control.SmartFieldKey != null)
+            {
+                errors.Add($"Control {control.Id}: a basic control cannot have a smartFieldKey");
+            }
+
             if (!GetBasicControlsList().Any(basicControl => basicControl.Type == control.Type))
             {
                 errors.Add($"Control {control.Id}: {control.Type} is not a basic control");

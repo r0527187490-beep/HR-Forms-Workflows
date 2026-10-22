@@ -8,7 +8,8 @@ namespace TavniyotBuilder.Api.Models
         public ControlType Type { get; set; }
         public string Label { get; set; } = string.Empty;
         public bool Required { get; set; }
-        public string? SmartFieldKey { get; set; }
+        public bool IsSmartField { get; set; }
+        public int? SmartFieldKey { get; set; }
         public bool ReadOnly { get; set; }
         public string? HelpText { get; set; }                          
         public string? DefaultValue { get; set; }                       
