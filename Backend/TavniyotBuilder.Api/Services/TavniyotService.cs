@@ -94,7 +94,7 @@ namespace TavniyotBuilder.Api.Services
 
             foreach (var smartField in smartFields)
             {
-                if (!ControlTypeByDataKey.TryGetValue(smartField.DataKey, out ControlType controlType))
+                if (!TryGetSmartFieldControlType(smartField, out ControlType controlType))
                 {
                     continue;
                 }
@@ -116,6 +116,29 @@ namespace TavniyotBuilder.Api.Services
         private static string ToCamelCase(string value)
         {
             return char.ToLowerInvariant(value[0]) + value.Substring(1);
+        }
+        private static bool TryGetSmartFieldControlType(SmartField smartField, out ControlType controlType)
+        {
+            if (ControlTypeByDataKey.TryGetValue(smartField.DataKey, out controlType))
+            {
+                return true;
+            }
+
+            switch (smartField.Type?.ToLowerInvariant())
+            {
+                case "text":
+                    controlType = ControlType.Text;
+                    return true;
+                case "number":
+                    controlType = ControlType.Number;
+                    return true;
+                case "date":
+                    controlType = ControlType.Date;
+                    return true;
+                default:
+                    controlType = default;
+                    return false;
+            }
         }
         public List<FormControl> GetBasicControlsList()
         {

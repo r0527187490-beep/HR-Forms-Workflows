@@ -11,6 +11,7 @@ namespace TavniyotBuilder.Api.Models.Enums
         File,
         HR_Name,
         HR_Id,
-        HR_Department
+        HR_Department,
+        Number
     }
 }
