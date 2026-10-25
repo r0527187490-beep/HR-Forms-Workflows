@@ -83,3 +83,63 @@
   text-align: center;
   color: #6b7280;
 }
+.html-preview {
+  ::ng-deep input,
+  ::ng-deep select,
+  ::ng-deep textarea {
+    box-sizing: border-box;
+    min-height: 32px;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font: inherit;
+    font-size: 13px;
+  }
+
+  ::ng-deep textarea { width: 100%; }
+
+  ::ng-deep label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  ::ng-deep button {
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 5px;
+    background: #3b82f6;
+    color: #fff;
+    cursor: pointer;
+  }
+}
+.html-preview {
+  ::ng-deep input,
+  ::ng-deep select,
+  ::ng-deep textarea {
+    box-sizing: border-box;
+    min-height: 32px;
+    padding: 6px 8px;
+    border: 1px solid #cbd5e1;
+    border-radius: 5px;
+    font: inherit;
+    font-size: 13px;
+  }
+
+  ::ng-deep textarea { width: 100%; }
+
+  ::ng-deep label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+  }
+
+  ::ng-deep button {
+    padding: 6px 14px;
+    border: 0;
+    border-radius: 5px;
+    background: #3b82f6;
+    color: #fff;
+    cursor: pointer;
+  }
+}

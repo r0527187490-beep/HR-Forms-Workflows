@@ -29,13 +29,12 @@
     <!-- אזור גלילה שמאפשר לראות גם קנבס גדול -->
     <div class="preview-scroll">
 
-      <!-- מצב תצוגה מקדימה של קוד HTML -->
+        <!-- מצב תצוגה מקדימה של קוד HTML -->
       <div
         *ngIf="isHtmlMode; else visualPreview"
         class="html-preview"
-        [innerHTML]="html">
+        [innerHTML]="safeHtml">
       </div>
-
       <!-- מצב תצוגה מקדימה של בנייה בגרירה -->
       <ng-template #visualPreview>
 

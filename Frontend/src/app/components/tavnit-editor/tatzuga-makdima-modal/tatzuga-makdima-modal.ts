@@ -1,5 +1,15 @@
-import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  EventEmitter,
+  inject,
+  Input,
+  OnChanges,
+  Output
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
+import DOMPurify from 'dompurify';
 import { RenderedControl } from '../design-tofes/tofes-canvas/rendered-control/rendered-control';
 
 @Component({
@@ -9,36 +19,37 @@ import { RenderedControl } from '../design-tofes/tofes-canvas/rendered-control/r
   templateUrl: './tatzuga-makdima-modal.html',
   styleUrl: './tatzuga-makdima-modal.scss'
 })
-export class TatzugaMakdimaModal {
+export class TatzugaMakdimaModal implements OnChanges {
 
-  constructor(private cdr: ChangeDetectorRef) {}
+  private cdr = inject(ChangeDetectorRef);
+  private sanitizer = inject(DomSanitizer);
 
-  // הפקדים שהועברו מהעורך
   @Input() fields: any[] = [];
-
-    // קוד ה-HTML שהתקבל מעורך הקוד.
   @Input() html = '';
-
-  // האם להציג HTML במקום את פקדי הקנבס.
   @Input() isHtmlMode = false;
-  // מידות הקנבס המקורי
   @Input() canvasWidth = 600;
   @Input() canvasHeight = 300;
-
-  // האם החלון פתוח
   @Input() isOpen = false;
 
-  // אירוע לסגירת החלון
   @Output() closed = new EventEmitter<void>();
+
+  // HTML מנוקה שמוצג כולל שדות הקלדה
+  safeHtml: SafeHtml = '';
 
   close(): void {
     this.closed.emit();
   }
+
   trackById(_: number, field: any): string {
-  return field.id;
-}
-// ➕ נוסף: מאלץ רענון כשמגיע מערך חדש
-ngOnChanges(): void {
-  this.cdr.markForCheck();
-}
+    return field.id;
+  }
+
+  ngOnChanges(): void {
+    const clean = DOMPurify.sanitize(this.html ?? '', {
+      ADD_TAGS: ['form', 'input', 'select', 'option', 'textarea', 'button']
+    });
+
+    this.safeHtml = this.sanitizer.bypassSecurityTrustHtml(clean);
+    this.cdr.markForCheck();
+  }
 }
