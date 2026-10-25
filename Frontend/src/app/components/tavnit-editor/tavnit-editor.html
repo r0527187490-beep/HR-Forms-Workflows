@@ -6,20 +6,30 @@
 
     <div class="header-actions" dir="ltr">
 
-      <!-- פרסום הטופס -->
-      <button
-        type="button"
-        class="header-button publish-button"
-        (click)="publishForm()">
+    <!-- שמירה כטיוטה -->
+    <button
+      type="button"
+      class="header-button"
+      (click)="publishForm(false)"
+      [disabled]="isSaving">
+      <span>שמור כטיוטה</span>
+    </button>
 
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M12 15V3"/>
-          <path d="m7 8 5-5 5 5"/>
-          <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/>
-        </svg>
+    <!-- פרסום הטופס -->
+    <button
+      type="button"
+      class="header-button publish-button"
+      (click)="publishForm(true)"
+      [disabled]="isSaving">
 
-        <span>פרסם טופס</span>
-      </button>
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <path d="M12 15V3"/>
+        <path d="m7 8 5-5 5 5"/>
+        <path d="M5 13v5a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-5"/>
+      </svg>
+
+      <span>פרסם טופס</span>
+    </button>
 
       <!-- תצוגה מקדימה -->
       <button
@@ -175,23 +185,22 @@
     role="tabpanel"
     [attr.aria-labelledby]="activeTab === 'builder' ? 'drag-builder-tab' : 'html-code-tab'">
 
-    <!-- בנייה בגרירה -->
-    <section *ngIf="activeTab === 'builder'">
-      <app-design-tofes
-        (fieldsChange)="onPreviewFieldsChange($event)"
-        (canvasSizeChange)="onPreviewCanvasSizeChange($event)">
-      </app-design-tofes>
-    </section>
+    <section [hidden]="activeTab !== 'builder'">
+    <app-design-tofes
+      (fieldsChange)="onPreviewFieldsChange($event)"
+      (canvasSizeChange)="onPreviewCanvasSizeChange($event)">
+    </app-design-tofes>
+  </section>
 
-    <!-- הצגת עורך ה-HTML כאשר לשונית HTML פעילה -->
-    <section *ngIf="activeTab === 'html'">
-      <app-html-code-editor
-        [html]="htmlCode"
-        (htmlChange)="onHtmlChange($event)"
-        (switchToVisual)="selectTab('builder')">
-      </app-html-code-editor>
-    </section>
-  </main>
+  <section [hidden]="activeTab !== 'html'">
+    <app-html-code-editor
+      [html]="htmlCode"
+      (htmlChange)="onHtmlChange($event)"
+      (switchToVisual)="selectTab('builder')">
+    </app-html-code-editor>
+  </section>
+</main>
+
 
   <!-- חלון תצוגה מקדימה -->
   <app-tatzuga-makdima-modal
@@ -203,5 +212,6 @@
     [isHtmlMode]="activeTab === 'html'"
     (closed)="closePreview()">
   </app-tatzuga-makdima-modal>
+  <p-confirmdialog />
 
 </div>

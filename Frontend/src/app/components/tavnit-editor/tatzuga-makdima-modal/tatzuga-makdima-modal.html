@@ -47,16 +47,17 @@
 
           <!-- הצגת כל הפקדים במיקום ובגודל שלהם -->
           <div
-            *ngFor="let field of fields"
+            *ngFor="let field of fields; trackBy: trackById"
             class="preview-field"
             [style.left.px]="field.x"
             [style.top.px]="field.y"
             [style.width.px]="field.width"
             [style.height.px]="field.height">
 
-            <app-rendered-control
-              [field]="field">
-            </app-rendered-control>
+          <app-rendered-control
+            [field]="field"
+            [labelReadonly]="true">
+          </app-rendered-control>
 
           </div>
 

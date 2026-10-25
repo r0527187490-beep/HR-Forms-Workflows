@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectorRef, Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RenderedControl } from '../design-tofes/tofes-canvas/rendered-control/rendered-control';
 
@@ -10,6 +10,8 @@ import { RenderedControl } from '../design-tofes/tofes-canvas/rendered-control/r
   styleUrl: './tatzuga-makdima-modal.scss'
 })
 export class TatzugaMakdimaModal {
+
+  constructor(private cdr: ChangeDetectorRef) {}
 
   // הפקדים שהועברו מהעורך
   @Input() fields: any[] = [];
@@ -32,4 +34,11 @@ export class TatzugaMakdimaModal {
   close(): void {
     this.closed.emit();
   }
+  trackById(_: number, field: any): string {
+  return field.id;
+}
+// ➕ נוסף: מאלץ רענון כשמגיע מערך חדש
+ngOnChanges(): void {
+  this.cdr.markForCheck();
+}
 }

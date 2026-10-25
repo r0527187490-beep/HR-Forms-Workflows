@@ -79,3 +79,35 @@
   color: #b91c1c;
   font-size: 12px;
 }
+/* שדה לעריכת שם הפקד */
+.control-label-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: right;
+  outline: none;
+  padding: 0;
+}
+
+/* סימון עדין בעת עריכת השם */
+.control-label-input:focus {
+  border-bottom: 1px solid currentColor;
+}
+// ➕ נוסף: שדה לעריכת שם הפקד
+.control-label-input {
+  width: 100%;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  text-align: right;
+  outline: none;
+  padding: 0;
+}
+
+// ➕ נוסף: סימון עדין בעת עריכה
+.control-label-input:focus {
+  border-bottom: 1px solid currentColor;
+}

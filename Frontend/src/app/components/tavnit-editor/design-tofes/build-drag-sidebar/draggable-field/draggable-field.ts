@@ -1,4 +1,3 @@
-
 import { Component, Input } from '@angular/core';
 import { NgIf } from '@angular/common';
 
@@ -15,29 +14,27 @@ import { ControlType } from '../../../../../models/enums/control-type.enum';
 export class DraggableField {
   @Input({ required: true }) field!: FormControl;
 
-  isHRName(): boolean {
-    return this.field.type === ControlType.HR_Name;
+  // פקד חכם מזוהה לפי הסימון מהשרת
+  get isSmartField(): boolean {
+    return !!this.field?.isSmartField;
   }
 
-  isHRId(): boolean {
-    return this.field.type === ControlType.HR_Id;
-  }
+  isBasic(type: string): boolean {
+    if (this.isSmartField) {
+      return false;
+    }
 
-  isHRDepartment(): boolean {
-    return this.field.type === ControlType.HR_Department;
-  }
+    const aliases: Record<string, ControlType> = {
+      text: ControlType.Text,
+      textarea: ControlType.Paragraph,
+      date: ControlType.Date,
+      file: ControlType.File,
+      number: ControlType.Number
+    };
 
-isBasic(type: string): boolean {
-  const aliases: Record<string, ControlType> = {
-    text: ControlType.Text,
-    textarea: ControlType.Paragraph,
-    date: ControlType.Date,
-    file: ControlType.File
-  };
+    const expectedType = aliases[type];
 
-  const expectedType = aliases[type];
-
-  return expectedType !== undefined
-    && this.field.type === expectedType;
+    return expectedType !== undefined
+      && this.field.type === expectedType;
 }
 }

@@ -4,6 +4,8 @@ import {
   inject,
   ViewChild
 } from '@angular/core';
+import { ConfirmationService } from 'primeng/api';
+import { ConfirmDialogModule } from 'primeng/confirmdialog';
 import { finalize } from 'rxjs';
 import { TavniyotService } from '../../services/tavniyot.service';
 import { CommonModule } from '@angular/common';
@@ -12,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { DesignTofes } from './design-tofes/design-tofes';
 import { TatzugaMakdimaModal } from './tatzuga-makdima-modal/tatzuga-makdima-modal';
 import { HtmlCodeEditor } from './design-tofes/html-code-editor/html-code-editor';
+import { FormDetails } from '../../models/form-details.model';
 
 type EditorTab = 'builder' | 'html';
 
@@ -23,15 +26,22 @@ type EditorTab = 'builder' | 'html';
     FormsModule,
     DesignTofes,
     TatzugaMakdimaModal,
-    HtmlCodeEditor
+    HtmlCodeEditor,
+    ConfirmDialogModule
   ],
+  providers: [ConfirmationService],
   templateUrl: './tavnit-editor.html',
   styleUrl: './tavnit-editor.scss'
 })
 export class TavnitEditor {
 
+  private confirmationService = inject(ConfirmationService);
+
   @ViewChild('nameInput')
   nameInput?: ElementRef<HTMLInputElement>;
+
+  // מאפשר לאפס את הקנבס (הוא מחזיק את הפקדים בזיכרון של עצמו).
+  showBuilder = true;
 
   // הלשונית הפעילה.
   activeTab: EditorTab = 'builder';
@@ -64,8 +74,7 @@ export class TavnitEditor {
   // מונע לחיצה כפולה בזמן השמירה.
   isSaving = false;
 
-  // מזהה התבנית מהשרת. ריק עד השמירה הראשונה, ואז כל שמירה יוצרת גרסה חדשה של אותה תבנית.
-  // מזהה התבנית מהשרת. ריק עד השמירה הראשונה, ואז כל שמירה יוצרת גרסה חדשה של אותה תבנית.
+  // מזהה התבנית מהשרת. ריק עד השמירה הראשונה.
   private idRecTavnit: number | null = null;
 
   // הערה כללית על הטופס (נשמרת בתבנית).
@@ -85,7 +94,6 @@ export class TavnitEditor {
     this.previousFormName = this.shemTofes;
     this.isEditingName = true;
 
-    // מיקוד בשדה לאחר הצגתו.
     setTimeout(() => {
       this.nameInput?.nativeElement.focus();
       this.nameInput?.nativeElement.select();
@@ -118,6 +126,7 @@ export class TavnitEditor {
   onPreviewFieldsChange(fields: any[]): void {
     this.previewFields = fields.map(field => ({ ...field }));
   }
+
   // קבלת הקוד מעורך ה-HTML.
   onHtmlChange(html: string): void {
     this.htmlCode = html;
@@ -131,105 +140,138 @@ export class TavnitEditor {
     this.previewCanvasHeight = size.height;
   }
 
-
-  // שמירת הטופס בשרת.
-  publishForm(): void {
-    // מניעת שמירה כפולה.
+  // בדיקות ואישור לפני שמירה.
+  publishForm(isPail: boolean = true): void {
     if (this.isSaving) {
       return;
     }
 
-    // סיום עריכת שם הטופס.
     this.finishEditingName();
 
     const enteredName = this.shemTofes.trim();
 
-    // בדיקת שם חובה.
     if (!enteredName) {
       alert('יש להזין שם לטופס.');
       return;
     }
 
-    // שם מלא הכולל את המילה "טופס".
     const fullFormName = /^טופס(?:\s|$)/.test(enteredName)
       ? enteredName
       : `טופס ${enteredName}`;
 
-    // המרה מה-enum המספרי לשמות שהשרת מצפה לקבל.
+    const isHtmlTab = this.activeTab === 'html';
+    const savedMode = isHtmlTab ? 'HTML' : 'גרירה';
+
+    const hasFields = this.previewFields.length > 0;
+    const hasHtml = this.htmlCode.trim().length > 0;
+    const hasBoth = hasFields && hasHtml;
+
+    const action = isPail ? 'לפרסם' : 'לשמור כטיוטה';
+
+    // אם יש תוכן בשני הטאבים מתווספת אזהרה
+    const message = hasBoth
+      ? `הטופס יישמר במצב ${savedMode}. התוכן במצב האחר יימחק. להמשיך?`
+      : `האם ${action} את הטופס?`;
+
+    this.confirmationService.confirm({
+      header: isPail ? 'פרסום הטופס' : 'שמירה כטיוטה',
+      message,
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'כן',
+      rejectLabel: 'לא',
+      accept: () => this.saveToServer(isPail, fullFormName)
+    });
+  }
+
+  // מוחק את התוכן של הצד שלא נשמר.
+  private clearOtherMode(savedMode: EditorTab): void {
+    if (savedMode === 'html') {
+      // נשמר HTML: מוחקים את הבנייה בגרירה
+      this.previewFields = [];
+      this.previewCanvasWidth = 600;
+      this.previewCanvasHeight = 300;
+
+      // הורסים ובונים מחדש את הקנבס, כדי שהפקדים שבתוכו יימחקו
+      this.showBuilder = false;
+      setTimeout(() => (this.showBuilder = true));
+    } else {
+      // נשמרה גרירה: מוחקים את קוד ה-HTML
+      this.htmlCode = '';
+    }
+  }
+
+  // השמירה עצמה בשרת.
+  private saveToServer(isPail: boolean, fullFormName: string): void {
+    // ✏️ שונה: הוגדר בתחילת הפונקציה, לפני השימוש
+    const isHtmlTab = this.activeTab === 'html';
+    const savedMode: EditorTab = isHtmlTab ? 'html' : 'builder';
+
     const controlTypeMap: Record<number, string> = {
       0: 'Text',
       1: 'Paragraph',
       2: 'Date',
       3: 'File',
-      4: 'HR_Name',
-      5: 'HR_Id',
-      6: 'HR_Department'
+      4: 'Number'
     };
 
-    // התאמת הפקדים למודל FormControl של השרת.
     const controls = this.previewFields.map((field, index) => ({
       id: String(field.id ?? `field-${index + 1}`),
-
       type: typeof field.type === 'number'
         ? controlTypeMap[field.type]
         : field.type,
-
+      isSmartField: Boolean(field.isSmartField),
+      readOnly: Boolean(field.isSmartField),
+      smartFieldKey: field.isSmartField && field.smartFieldKey != null
+        ? Number(field.smartFieldKey)
+        : null,
       label: field.label,
       required: Boolean(field.required),
-      readOnly: Boolean(field.readOnly),
-
-      smartFieldKey: field.smartFieldKey ?? null,
       helpText: field.helpText ?? null,
       defaultValue: field.defaultValue ?? null,
-
-      // מיקום הפקד בקנבס.
       x: Number(field.x ?? 0),
       y: Number(field.y ?? 0),
-
-      // מידות הפקד.
       width: Number(field.width ?? 180),
       height: Number(field.height ?? 50)
     }));
 
-    // בדיקה שסוגי הפקדים תקינים.
-    if (controls.some(field => !field.type)) {
+    if (!isHtmlTab && controls.some(field => !field.type)) {
       alert('נמצא פקד עם סוג לא מוכר. לא ניתן לשמור את הטופס.');
       return;
     }
 
-    // בניית FormDetails בהתאם למודל שסיפקת.
-    const details = {
+    const details: FormDetails = {
       idRecTavnit: this.idRecTavnit,
       shemTofes: fullFormName,
       teur: this.teur.trim() || null,
-      form: {
-        controls,
-        canvasWidth: this.previewCanvasWidth,
-        canvasHeight: this.previewCanvasHeight
-      }
+      isPail: isPail,
+      tochenHtml: isHtmlTab ? this.htmlCode : null,
+      form: isHtmlTab
+        ? null
+        : {
+            controls,
+            canvasWidth: this.previewCanvasWidth,
+            canvasHeight: this.previewCanvasHeight
+          }
     };
 
-    // התחלת שמירה.
     this.isSaving = true;
 
     this.tavniyotService.saveForm(details)
-      .pipe(
-        finalize(() => {
-          this.isSaving = false;
-        })
-      )
+      .pipe(finalize(() => { this.isSaving = false; }))
       .subscribe({
         next: response => {
           this.idRecTavnit = response.idRecTavnit ?? null;
-          console.log('הטופס נשמר:', response);
-          alert('הטופס נשמר בהצלחה!');
-        },
 
+          // ➕ נוסף: מחיקת הצד השני רק אחרי שהשרת אישר
+          this.clearOtherMode(savedMode);
+
+          alert(
+            isPail
+              ? 'הטופס פורסם בהצלחה!'
+              : 'הטופס נשמר כטיוטה בהצלחה!');
+        },
         error: error => {
           console.error('שגיאה בשמירת הטופס:', error);
-          console.error('סטטוס:', error.status);
-          console.error('תגובת השרת:', error.error);
-
           alert(
             `שמירת הטופס נכשלה.\n` +
             `סטטוס: ${error.status}\n` +
@@ -240,7 +282,6 @@ export class TavnitEditor {
         }
       });
   }
-
 
   // מניעת ניווט.
   onBackLink(event: MouseEvent): void {

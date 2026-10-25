@@ -51,7 +51,7 @@ export class TavniyotService {
 
   // ---- הגדרות שדות חכמים ----
 
-  getSmartFields(onlyActive = false): Observable<SmartField[]> {
+  getSmartFields(onlyActive = true): Observable<SmartField[]> {
     return this.http.get<SmartField[]>(
       `${this.baseUrl}/smart-fields`,
       { params: { onlyActive } }

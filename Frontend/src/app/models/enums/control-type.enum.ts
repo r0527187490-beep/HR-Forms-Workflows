@@ -3,7 +3,5 @@ export enum ControlType {
   Paragraph,
   Date,
   File,
-  HR_Name,
-  HR_Id,
-  HR_Department
+  Number,
 }

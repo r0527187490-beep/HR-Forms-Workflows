@@ -529,3 +529,7 @@
   font: inherit;
   font-size: 13px;
 }
+
+section[hidden] {
+  display: none !important;
+}

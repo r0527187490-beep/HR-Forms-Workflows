@@ -14,16 +14,17 @@
       (cdkDropListDropped)="drop($event)"
       (pointerdown)="clearSelection()"
     >
-      <div
-        *ngFor="let field of fields"
-        class="canvas-field"
-        [class.selected]="selectedFieldId === field.id"
-        [style.left.px]="field.x"
-        [style.top.px]="field.y"
-        [style.width.px]="field.width"
-        [style.height.px]="field.height"
-        (pointerdown)="selectField($event, field)"
-      >
+    
+   <div
+  *ngFor="let field of fields; trackBy: trackById"
+  class="canvas-field"
+  [class.selected]="selectedFieldId === field.id"
+  [style.left.px]="field.x"
+  [style.top.px]="field.y"
+  [style.width.px]="field.width"
+  [style.height.px]="field.height"
+  (pointerdown)="selectField($event, field)"
+>
         <div
           class="field-toolbar"
           (pointerdown)="startMove($event, field)"

@@ -1,12 +1,33 @@
 <div class="rendered-control" dir="rtl">
+
   <!-- כותרת הפקד -->
-  <label class="control-label">
-    {{ field.label }}
-  </label>
+  <div class="control-label">
 
-  <ng-container [ngSwitch]="field.type">
+    <!-- פקד בסיסי בעורך: כותרת ניתנת לעריכה -->
+    <input
+      *ngIf="canEditLabel"
+      type="text"
+      class="control-label-input"
+      [value]="field.label"
+      placeholder="הקלידי שם לפקד"
+      (input)="onLabelChange($event)" />
 
-    <!-- פקדים בסיסיים לפי ה-enum -->
+    <!-- פקד חכם או תצוגה מקדימה: טקסט בלבד -->
+    <span *ngIf="!canEditLabel">{{ field.label }}</span>
+
+  </div>
+
+  <!-- פקד חכם: קלט נעול -->
+  <input
+    *ngIf="isSmartField"
+    type="text"
+    class="form-input smart-input"
+    readonly
+    [placeholder]="smartPlaceholder" />
+
+  <!-- פקדים בסיסיים -->
+  <ng-container *ngIf="!isSmartField" [ngSwitch]="field.type">
+
     <input
       *ngSwitchCase="ControlType.Text"
       type="text"
@@ -16,8 +37,7 @@
     <textarea
       *ngSwitchCase="ControlType.Paragraph"
       class="form-input textarea-input"
-      placeholder="הקלידי כאן...">
-    </textarea>
+      placeholder="הקלידי כאן..."></textarea>
 
     <input
       *ngSwitchCase="ControlType.Date"
@@ -29,72 +49,12 @@
       type="file"
       class="form-input file-input" />
 
-    <!-- שדות HR לפי ה-enum -->
     <input
-      *ngSwitchCase="ControlType.HR_Name"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
+      *ngSwitchCase="ControlType.Number"
+      type="number"
+      class="form-input"
+      placeholder="הקלידי מספר..." />
 
-    <input
-      *ngSwitchCase="ControlType.HR_Id"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
-
-    <input
-      *ngSwitchCase="ControlType.HR_Department"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
-
-    <!-- תמיכה בשדות HR ישנים אם הם מגיעים כמחרוזות -->
-    <input
-      *ngSwitchCase="'HR_Name'"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
-
-    <input
-      *ngSwitchCase="'HR_Id'"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
-
-    <input
-      *ngSwitchCase="'HR_Department'"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
-
-    <input
-      *ngSwitchCase="'employeeName'"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
-
-    <input
-      *ngSwitchCase="'employeeId'"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
-
-    <input
-      *ngSwitchCase="'department'"
-      type="text"
-      class="form-input smart-input"
-      readonly
-      [placeholder]="smartPlaceholder" />
-
-    <!-- סוג פקד לא מזוהה -->
     <p *ngSwitchDefault class="unknown-control">
       סוג פקד לא מוכר: {{ field.type }}
     </p>

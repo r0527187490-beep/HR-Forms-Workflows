@@ -118,7 +118,10 @@ export class TofesCanvas {
       label: option.label,
       required: option.required ?? false,
       readOnly: option.readOnly ?? false,
-      smartFieldKey: option.smartFieldKey ?? null,
+      isSmartField: option.isSmartField ?? false,                // נוסף
+      smartFieldKey: option.smartFieldKey != null
+        ? Number(option.smartFieldKey)
+        : null,                                                  // שונה
       helpText: option.helpText ?? null,
       defaultValue: option.defaultValue ?? null,
       x,
@@ -302,6 +305,22 @@ export class TofesCanvas {
     this.movingField = null;
     this.resizingField = null;
     this.resizingCanvas = false;
+  }
+  // ➕ נוסף: מונע בנייה מחדש של האלמנט בכל הקלדה
+  trackById(_: number, field: CanvasField): string {
+    return field.id;
+  }
+
+  // ➕ נוסף: מעדכן את הכותרת ושולח את הרשימה המעודכנת החוצה
+  onLabelChanged(e: { id: string; label: string }): void {
+    const field = this.fields.find(f => f.id === e.id);
+
+    if (!field) {
+      return;
+    }
+
+    field.label = e.label;
+    this.emitCanvasState();
   }
 
   removeField(id: string): void {

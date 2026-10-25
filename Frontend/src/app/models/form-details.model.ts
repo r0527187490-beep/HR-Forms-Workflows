@@ -6,5 +6,11 @@ export interface FormDetails {
   teur?: string | null;
   idRecTofesVersion?: number | null;
   misparGirsa?: number | null;
+  tochenHtml?: string | null;
+  isPail?: boolean;
+  taarichYetzira?: string | null;
+  idYotzer?: number | null;
+  isMivneJson?: boolean;
   form?: FormStructure | null;
 }
+
